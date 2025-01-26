@@ -1,0 +1,49 @@
+name: droute_frontend
+description: "dRoute is a collaborative logistics platform"
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.6.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.9.2  # Ensure flutter_launcher_icons is in dev_dependencies
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/app_icon.png"  # Path to your app icon image
+  android_icon: "launcher_icon"  # Define the android icon name
+  min_sdk_android: 21  # Minimum SDK for Android
+
+flutter:
+  uses-material-design: true
+
+# Ensure the flutter_launcher_icons version is only mentioned once in dev_dependencies section
+flutter_launcher_icons: ^0.14.3
+
+# Web configuration for the icon
+web:
+  generate: true
+  image_path: "assets/images/app_icon.png"  # Path to image for web
+  background_color: "#hexcode"  # Optional, replace with your color hex
+  theme_color: "#hexcode"  # Optional, replace with your color hex
+
+# Windows configuration for the icon
+windows:
+  generate: true
+  image_path: "assets/images/app_icon.png"  # Path to image for Windows
+  icon_size: 48  # Min: 48, Max: 256, Default: 48
+
+# macOS configuration for the icon
+macos:
+  generate: true
+  image_path: "assets/images/app_icon.png"  # Path to image for macOS
