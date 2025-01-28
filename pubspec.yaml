@@ -26,6 +26,8 @@ flutter_icons:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/droute_logo.png  # Added your asset here
 
 # Ensure the flutter_launcher_icons version is only mentioned once in dev_dependencies section
 flutter_launcher_icons: ^0.14.3
