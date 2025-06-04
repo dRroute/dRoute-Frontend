@@ -31,10 +31,11 @@ import Snackbar from './components/snackbar';
 import InstructionToComplete from './screens/completeProfile/instructionToComplete';
 import PendingForApprovalScreen from './screens/completeProfile/pendingForApproval';
 import profileStatusScreen from './screens/completeProfile/pendingAccountScreen';
-import JourneyManagement from './screens/journey/journeyManagement';
+import VehicleAndParcelDetail from './screens/journey/vehicleAndParcelDetail';
 import PreviousJourneyDetail from './screens/journey/previousJourneyDetail';
 import UserHome from './screens/home/userHome';
 import { selectUser } from './redux/selector/authSelector';
+import VehicleDetail from './screens/journey/vehicleDetail';
 
 const Stack = createStackNavigator();
 
@@ -56,6 +57,10 @@ function AppNavigator() {
         >
           {!user ? (
             <>
+            
+              <Stack.Screen name="VehicleDetail" component={VehicleDetail} />
+               <Stack.Screen name="ChatScreen" component={ChatScreen} />
+               <Stack.Screen name="LocationPickerScreen" component={LocationPickerScreen} />
               <Stack.Screen name="Onboarding" component={OnboardingScreen} />
               <Stack.Screen name="SignInScreen" component={SignInScreen} />
               <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
@@ -67,7 +72,8 @@ function AppNavigator() {
               
               <Stack.Screen name="BottomNavigationBar" component={BottomNavigationBar} />
                <Stack.Screen name="Home" component={Home} />
-              <Stack.Screen name="JourneyManagement" component={JourneyManagement} />
+              <Stack.Screen name="VehicleAndParcelDetail" component={VehicleAndParcelDetail} />
+               <Stack.Screen name="VehicleDetail" component={VehicleDetail} />
               <Stack.Screen name="UserHome" component={UserHome} />
                <Stack.Screen name="SearchVehicleForm" component={SearchVehicleForm} />
               <Stack.Screen name="AllJourneyList" component={AllJourneyList} />

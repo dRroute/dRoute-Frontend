@@ -66,7 +66,7 @@ const AllJourneyList = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCardClick = (item) => {
-    navigation.navigate("JourneyManagement");
+    navigation.navigate("PreviousJourneyDetail");
   };
 
   return (
