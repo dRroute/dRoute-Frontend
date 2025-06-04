@@ -98,8 +98,7 @@ const HelpScreen = ({ navigation }) => {
             setDescription,
             "Describe Your Query....",
             "Description",
-            false,
-           
+            false, 
           )}
           <TouchableOpacity
             style={{ ...commonStyles.button, marginBottom: 50 }}

@@ -50,7 +50,7 @@ const VehicleAndParcelDetail = ({ navigation }) => {
               <View style={styles.userDetails}>
                 <Text style={styles.userName}>Alok</Text>
                 <Text style={{ ...Fonts.grayColor12Medium }}>
-                  +91 9767897556
+                  TATA Mini Truck
                 </Text>
               </View>
             </View>

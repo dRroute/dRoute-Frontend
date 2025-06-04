@@ -89,7 +89,7 @@ const UserHome = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCardClick = (item) => {
-    navigation.navigate("JourneyManagement");
+    navigation.navigate("VehicleDetail");
   };
 
   const scrollY = useRef(new Animated.Value(0)).current;

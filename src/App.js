@@ -60,7 +60,7 @@ function AppNavigator() {
           {!user ? (
             <>
               {/* <Stack.Screen name="AllReviewScreen" component={AllReviewScreen} /> */}
-              <Stack.Screen name="OrderDetailScreen" component={OrderDetailScreen} />
+              {/* <Stack.Screen name="OrderDetailScreen" component={OrderDetailScreen} /> */}
               <Stack.Screen name="Onboarding" component={OnboardingScreen} />
               <Stack.Screen name="SignInScreen" component={SignInScreen} />
               <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
