@@ -23,21 +23,47 @@ import SwipeableTabs from "../../components/swipeableTabs";
 import { ParcelCard, ParcelLoadingCard } from "../../components/parcelCard";
 import { FlatList, TextInput } from "react-native-gesture-handler";
 
-
 const VehicleDetail = ({ navigation }) => {
   const [isOfferModalVisible, setOfferModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [offerPrice, setOfferPrice] = useState(null);
-  const handleOfferSubmit = () => {
-
-  };
-
-
+  const image = null;
+  const handleOfferSubmit = () => {};
 
   const VehicleDetailTab = () => {
     return (
       <>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <View style={styles.userContainer}>
+            <View style={styles.userInfo}>
+              {image ? (
+                <Image source={{ uri: image }} style={styles.userImage} />
+              ) : (
+                <View style={styles.userImagePlaceholder}>
+                  <MaterialIcons
+                    name="person"
+                    size={26}
+                    color={Colors.grayColor}
+                  />
+                </View>
+              )}
+              <View style={styles.userDetails}>
+                <Text style={styles.userName}>Alok</Text>
+                <Text style={{ ...Fonts.grayColor12Medium }}>
+                  TATA Mini Truck
+                </Text>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ChatScreen")}
+              style={styles.chatIcon}
+            >
+              <Text style={{ fontSize: 12, fontWeight: "500" }}>⭐4.5</Text>
+              <Text style={{ fontSize: 12, fontWeight: "500" }}>See All</Text>
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.locationsContainer}>
             <LocationItem
               title="Source Address"
@@ -63,8 +89,6 @@ const VehicleDetail = ({ navigation }) => {
 
           <View style={styles.divider} />
         </ScrollView>
-
-       
       </>
     );
   };
@@ -94,31 +118,28 @@ const VehicleDetail = ({ navigation }) => {
     );
   };
 
-
   return (
     <SafeAreaView style={styles.container}>
       <MyStatusBar />
       {commonAppBar("Vehicle Detail", navigation)}
-        {VehicleDetailTab()}
-       <View style={styles.bottomButtons}>
-          <TouchableOpacity
-            activeOpacity={0.6}
-            onPress={()=>navigation.navigate("ChatScreen")}
-            style={{ ...commonStyles.outlinedButton, flex: 1 }}
-          >
-            <Text style={commonStyles.outlinedButtonText}>Chat With Driver</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            activeOpacity={0.7}
-            onPress={()=>navigation.navigate("LocationPickerScreen")}
-            style={{ ...commonStyles.button, flex: 1 }}
-          >
-            <Text style={commonStyles.buttonText}>Request Driver</Text>
-          </TouchableOpacity>
-        </View>
+      {VehicleDetailTab()}
+      <View style={styles.bottomButtons}>
+        <TouchableOpacity
+          activeOpacity={0.6}
+          onPress={() => navigation.navigate("ChatScreen")}
+          style={{ ...commonStyles.outlinedButton, flex: 1 }}
+        >
+          <Text style={commonStyles.outlinedButtonText}>Chat With Driver</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate("LocationPickerScreen")}
+          style={{ ...commonStyles.button, flex: 1 }}
+        >
+          <Text style={commonStyles.buttonText}>Request Driver</Text>
+        </TouchableOpacity>
+      </View>
       {circularLoader(isLoading)}
-      
-      
     </SafeAreaView>
   );
 };

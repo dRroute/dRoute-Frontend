@@ -18,17 +18,25 @@ import {
   reUsableOverlayWithButton,
 } from "../../components/commonComponents";
 import MyStatusBar from "../../components/myStatusBar";
-import { Colors, commonStyles, Fonts } from "../../constants/styles";
+import { Colors, commonStyles, Fonts, Sizes } from "../../constants/styles";
 import SwipeableTabs from "../../components/swipeableTabs";
 import { ParcelCard, ParcelLoadingCard } from "../../components/parcelCard";
 import { FlatList, TextInput } from "react-native-gesture-handler";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { Tracking } from "../../components/tracking";
 
-const VehicleAndParcelDetail = ({ navigation }) => {
+const OrderDetailScreen = ({ navigation }) => {
   const [isOfferModalVisible, setOfferModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [offerPrice, setOfferPrice] = useState(null);
-  const image =null;
+  const [offerPrice, setOfferPrice] = useState("200");
+  const [isAccepted, setIsAccepted] = useState(false);
   const handleOfferSubmit = () => {};
+
+  const handleCheckout = () => {
+    setIsAccepted(true);
+  };
+
+  const image = null;
 
   const VehicleDetailTab = () => {
     return (
@@ -50,7 +58,7 @@ const VehicleAndParcelDetail = ({ navigation }) => {
               <View style={styles.userDetails}>
                 <Text style={styles.userName}>Alok</Text>
                 <Text style={{ ...Fonts.grayColor12Medium }}>
-                  +91 9767897556
+                  TATA Mini Truck
                 </Text>
               </View>
             </View>
@@ -59,8 +67,7 @@ const VehicleAndParcelDetail = ({ navigation }) => {
               onPress={() => navigation.navigate("ChatScreen")}
               style={styles.chatIcon}
             >
-              <Text style={{ fontSize: 12, fontWeight: "500" }}>⭐4.5</Text>
-              <Text style={{ fontSize: 12, fontWeight: "500" }}>See All</Text>
+              <MaterialIcons name="chat" size={26} color="teal" />
             </TouchableOpacity>
           </View>
           <View style={styles.locationsContainer}>
@@ -84,9 +91,15 @@ const VehicleAndParcelDetail = ({ navigation }) => {
               <DetailRow label="Length" value="19 m" />
               <DetailRow label="Weight" value="20 Kg" />
             </View>
+            <View style={styles.divider} />
+            <Text style={styles.sectionTitle}>Progress</Text>
+            <View style={styles.divider} />
           </View>
+          {/* <View style={styles.divider} /> */}
+         
+           <Tracking />
 
-          <View style={styles.divider} />
+          
         </ScrollView>
       </>
     );
@@ -126,12 +139,14 @@ const VehicleAndParcelDetail = ({ navigation }) => {
 
           <View style={styles.section}>
             <View style={styles.divider} />
-            <Text style={styles.sectionTitle}>Expected Charges :</Text>
+            <Text style={styles.sectionTitle}>Payment Detail :</Text>
             <View style={styles.divider} />
             <View style={{ marginTop: 8 }}>
               <DetailRow label="Delivery Charge" value="299 $" />
               <DetailRow label="Insurance Charge" value="9 $" />
-              <DetailRow label="Total" value="300 $" />
+              <DetailRow label="GST" value="2 $" />
+              <DetailRow label="Platform & Handeling Charge" value="19 $" />
+              <DetailRow label="Total" value="343 $" />
             </View>
           </View>
           <View style={styles.divider} />
@@ -176,7 +191,7 @@ const VehicleAndParcelDetail = ({ navigation }) => {
             color: Colors.primaryColor,
           }}
         >
-          OFFER AN AMOUNT
+          UPDATE OFFERED AMOUNT
         </Text>
         <TextInput
           style={styles.boxInput}
@@ -195,26 +210,35 @@ const VehicleAndParcelDetail = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <MyStatusBar />
-      {commonAppBar("Take an Action", navigation)}
+      {commonAppBar("Order Detail", navigation)}
+      
       <SwipeableTabs
-        titles={["Vehicle Detail", "Parcel Detail"]}
+        titles={["Vehicle Detail", "Parcel & Payment Detail"]}
         components={[<VehicleDetailTab />, <ParcelDetail />]}
       />
+        
       <View style={styles.bottomButtons}>
         <TouchableOpacity
           activeOpacity={0.6}
           onPress={() => navigation.navigate("ChatScreen")}
           style={{ ...commonStyles.outlinedButton, flex: 1 }}
         >
-          <Text style={commonStyles.outlinedButtonText}>Chat With Driver</Text>
+          <Text style={commonStyles.outlinedButtonText}>Rate Order</Text>
         </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={() => setOfferModalVisible(true)}
-          style={{ ...commonStyles.button, flex: 1 }}
+          onPress={handleCheckout}
+          style={{
+            ...commonStyles.button,
+            flex: 1,
+            backgroundColor: isAccepted
+              ? Colors.primaryColor
+              : Colors.grayColor,
+          }}
         >
-          <Text style={commonStyles.buttonText}>Make an Offer</Text>
+          <Text style={commonStyles.buttonText}>Cancel Order</Text>
         </TouchableOpacity>
+
       </View>
       {circularLoader(isLoading)}
       {reUsableOverlayWithButton(
@@ -324,6 +348,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 60,
   },
+ 
 });
 
-export default VehicleAndParcelDetail;
+export default OrderDetailScreen;

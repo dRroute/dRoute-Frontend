@@ -1,110 +1,247 @@
-
-import React, { useState } from 'react';
+import React, { useRef, useState } from "react";
 import {
   View,
   Text,
   StyleSheet,
   Image,
+  Dimensions,
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
-} from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
-import { actionOverlay, commonAppBar } from '../../components/commonComponents';
-import MyStatusBar from '../../components/myStatusBar';
-import { Colors, commonStyles, Fonts } from '../../constants/styles';
-
-
-
+} from "react-native";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import {
+  actionOverlay,
+  circularLoader,
+  commonAppBar,
+  inputBox,
+  reUsableOverlayWithButton,
+} from "../../components/commonComponents";
+import MyStatusBar from "../../components/myStatusBar";
+import { Colors, commonStyles, Fonts } from "../../constants/styles";
+import SwipeableTabs from "../../components/swipeableTabs";
+import { ParcelCard, ParcelLoadingCard } from "../../components/parcelCard";
+import { FlatList, TextInput } from "react-native-gesture-handler";
+import Ionicons from "react-native-vector-icons/Ionicons";
 const RequestDetailScreen = ({ navigation }) => {
-  const [isAcceptModalVisible,setAcceptModalVisible]=useState(false);
-  const [isRejectModalVisible,setRejectModalVisible]=useState(false);
-  const image = null;
- const handleAccept=()=>{
+  const [isOfferModalVisible, setOfferModalVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [offerPrice, setOfferPrice] = useState("200");
+  const [isAccepted , setIsAccepted]=useState(false);
+  const handleOfferSubmit = () => {};
 
- }
-const handleReject=()=>{
-
+const handleCheckout =()=>{
+setIsAccepted(true);
 }
+  
+   const image =null;
+  const VehicleDetailTab = () => {
+    return (
+      <>
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <View style={styles.userContainer}>
+            <View style={styles.userInfo}>
+              {image ? (
+                <Image source={{ uri: image }} style={styles.userImage} />
+              ) : (
+                <View style={styles.userImagePlaceholder}>
+                  <MaterialIcons
+                    name="person"
+                    size={26}
+                    color={Colors.grayColor}
+                  />
+                </View>
+              )}
+              <View style={styles.userDetails}>
+                <Text style={styles.userName}>Alok</Text>
+                <Text style={{ ...Fonts.grayColor12Medium }}>
+                  +91 9767897556
+                </Text>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ChatScreen")}
+              style={styles.chatIcon}
+            >
+              <Text style={{ fontSize: 12, fontWeight: "500" }}>⭐4.5</Text>
+              <Text style={{ fontSize: 12, fontWeight: "500" }}>See All</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.locationsContainer}>
+            <LocationItem
+              title="Source Address"
+              address="Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041"
+            />
+            <LocationItem
+              title="Destination Address"
+              address="Vadgaon Bk Pune 411041 411041 Vadgaon Bk Pune 411041"
+            />
+          </View>
+
+          <View style={styles.section}>
+            <View style={styles.divider} />
+            <Text style={styles.sectionTitle}>Vehicle Capacity:</Text>
+            <View style={styles.divider} />
+            <View style={{ marginTop: 8 }}>
+              <DetailRow label="Height" value="20 m" />
+              <DetailRow label="Width" value="10 m" />
+              <DetailRow label="Length" value="19 m" />
+              <DetailRow label="Weight" value="20 Kg" />
+            </View>
+          </View>
+          <View style={styles.section}>
+            <View style={styles.divider} />
+             <View style={{ ...commonStyles.rowSpaceBetween, paddingVertical: 8 }}>
+             <Text style={styles.sectionTitle}>OFFERED AMOUNT : 500 $</Text>
+             <TouchableOpacity  onPress={() => setOfferModalVisible(true)}>
+              <Ionicons name="create-outline" size={30} color="teal" />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.divider} />
+           
+          </View>
+
+          <View style={styles.divider} />
+        </ScrollView>
+      </>
+    );
+  };
+
+  const closeOfferModal = () => {
+    setOfferModalVisible(false);
+  };
+
+  const ParcelDetail = () => {
+    return (
+      <>
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          <View style={styles.locationsContainer}>
+            <LocationItem
+              title="Pickup Address"
+              address="Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041"
+            />
+            <LocationItem
+              title="Delivery Address"
+              address="Vadgaon Bk Pune 411041 411041 Vadgaon Bk Pune 411041"
+            />
+          </View>
+
+          <View style={styles.section}>
+            <View style={styles.divider} />
+            <Text style={styles.sectionTitle}>Parcel Detail:</Text>
+            <View style={styles.divider} />
+            <View style={{ marginTop: 8 }}>
+              <DetailRow label="Height" value="20 m" />
+              <DetailRow label="Width" value="10 m" />
+              <DetailRow label="Length" value="19 m" />
+              <DetailRow label="Weight" value="20 Kg" />
+              <DetailRow label="Value" value="200 $" />
+            </View>
+          </View>
+
+          <View style={styles.section}>
+            <View style={styles.divider} />
+            <Text style={styles.sectionTitle}>Expected Charges :</Text>
+            <View style={styles.divider} />
+            <View style={{ marginTop: 8 }}>
+              <DetailRow label="Delivery Charge" value="299 $" />
+              <DetailRow label="Insurance Charge" value="9 $" />
+              <DetailRow label="Total" value="300 $" />
+            </View>
+          </View>
+          <View style={styles.divider} />
+        </ScrollView>
+      </>
+    );
+  };
+
+  const LocationItem = ({ title, address }) => {
+    return (
+      <View style={styles.locationItem}>
+        <View style={styles.locationMarker}>
+          <MaterialIcons name="location-on" size={20} color="teal" />
+        </View>
+        <View style={styles.locationInfo}>
+          <Text style={{ ...Fonts.blackColor14Bold, marginBottom: 4 }}>
+            {title}
+          </Text>
+          <Text style={Fonts.grayColor12Medium}>{address}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  const DetailRow = ({ label, value }) => {
+    return (
+      <View style={{ ...commonStyles.rowSpaceBetween, paddingVertical: 8 }}>
+        <Text style={Fonts.blackColor12SemiBold}>{label}:</Text>
+        <Text style={Fonts.blackColor12SemiBold}>{value}</Text>
+      </View>
+    );
+  };
+  const offerOverlay = () => {
+    return (
+      <View style={{ padding: 10 }}>
+        <Text
+          style={{
+            textAlign: "center",
+            fontSize: 14,
+            fontWeight: "700",
+            marginBottom: 10,
+            color: Colors.primaryColor,
+          }}
+        >
+          UPDATE OFFERED AMOUNT
+        </Text>
+        <TextInput
+          style={styles.boxInput}
+          placeholder="Amount You are Willing to Pay"
+          placeholderTextColor="gray"
+          value={offerPrice}
+          onChangeText={(text) => {
+            setOfferPrice(text);
+          }}
+          keyboardType="numeric"
+        />
+      </View>
+    );
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <MyStatusBar />
       {commonAppBar("Request Detail", navigation)}
-
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        <View style={styles.userContainer}>
-          <View style={styles.userInfo}>
-            {image ? (
-              <Image source={{ uri: image }} style={styles.userImage} />
-            ) : (
-              <View style={styles.userImagePlaceholder}>
-                <MaterialIcons name="person" size={26} color={Colors.grayColor} />
-              </View>
-            )}
-            <View style={styles.userDetails}>
-              <Text style={styles.userName}>Alok</Text>
-              <Text style={{...Fonts.grayColor12Medium,}}>+91 9767897556</Text>
-            </View>
-          </View>
-
-          <TouchableOpacity onPress={()=>navigation.navigate("ChatScreen")} style={styles.chatIcon}>
-            <MaterialIcons name="chat" size={26} color="teal" />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.divider} />
-         <View style={styles.locationsContainer}>
-          <LocationItem title={"Pickup Address"} address={"Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041"} />
-          <LocationItem title={"Delivery Addess"} address={"Vadgaon Bk Pune 411041 411041 Vadgaon Bk Pune 411041"} />
-         </View>
-
-        <View style={styles.section}>
-          <View style={styles.divider} />
-          <Text style={styles.sectionTitle}>Package Details:</Text>
-          <View style={styles.divider} />
-          <View style={{ marginTop: 8,}}>
-            <DetailRow label={"Height"} value={"20 m"} />
-            <DetailRow label={"Width"} value={"10 m"} />
-            <DetailRow label={"Length"} value={"19 m"} />
-            <DetailRow label={"Weight"} value={"20 Kg"} />
-            <DetailRow label={"Expected Value"} value={"400 $"} />
-            <DetailRow label={"Offered Value"} value={"500 $"} />
-          </View>
-        </View>
-      </ScrollView>
-
+      <SwipeableTabs
+        titles={["Vehicle Detail", "Parcel Detail"]}
+        components={[<VehicleDetailTab />, <ParcelDetail />]}
+      />
       <View style={styles.bottomButtons}>
-        <TouchableOpacity onPress={()=>setRejectModalVisible(true)} style={{...commonStyles.outlinedButton,flex: 1,}}>
-          <Text style={{...commonStyles.outlinedButtonText}}>Reject</Text>
+        <TouchableOpacity
+          activeOpacity={0.6}
+          onPress={() => navigation.navigate("ChatScreen")}
+          style={{ ...commonStyles.outlinedButton, flex: 1 }}
+        >
+          <Text style={commonStyles.outlinedButtonText}>Chat With Driver</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={()=>setAcceptModalVisible(true)} style={{...commonStyles.button,flex: 1,}}>
-          <Text style={{...commonStyles.buttonText}}>Accept</Text>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={handleCheckout}
+          style={{ ...commonStyles.button, flex: 1 ,backgroundColor:isAccepted?Colors.primaryColor:Colors.grayColor }}
+        >
+          <Text style={commonStyles.buttonText }>Checkout</Text>
         </TouchableOpacity>
       </View>
-      {actionOverlay(handleAccept,isAcceptModalVisible,setAcceptModalVisible,"Do You Want to Accept ?",Colors.primaryColor)}
-      {actionOverlay(handleReject,isRejectModalVisible,setRejectModalVisible,"Do You Want to Reject ?",Colors.darkOrangeColor)}
+      {circularLoader(isLoading)}
+      {reUsableOverlayWithButton(
+        offerOverlay,
+        handleOfferSubmit,
+        closeOfferModal,
+        isOfferModalVisible,
+        setOfferModalVisible
+      )}
     </SafeAreaView>
   );
-  function LocationItem ({ title, address }){
-  return (
-  <View style={styles.locationItem}>
-    <View style={styles.locationMarker}>
-      <MaterialIcons name="location-on" size={20} color="teal" />
-    </View>
-    <View style={styles.locationInfo}>
-      <Text style={{ ...Fonts.blackColor14Bold, marginBottom: 4,}}>{title}</Text>
-      <Text style={{...Fonts.grayColor12Medium,}} >{address}</Text>
-    </View>
-  </View>
-)};
-function DetailRow ({ label, value }){
-  return(
-  <View style={{ ...commonStyles.rowSpaceBetween,paddingVertical: 8,}}>
-    <Text style={{ ...Fonts.blackColor12SemiBold,}}>{label}:</Text>
-    <Text style={{ ...Fonts.blackColor12SemiBold,}}>{value}</Text>
-  </View>)
-};
 };
 
 const styles = StyleSheet.create({
@@ -116,19 +253,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   userContainer: {
-  ...commonStyles.rowSpaceBetween,
+    ...commonStyles.rowSpaceBetween,
     padding: 16,
   },
   userInfo: {
-   ...commonStyles.rowAlignCenter
+    ...commonStyles.rowAlignCenter,
   },
   userImagePlaceholder: {
     width: 45,
     height: 45,
     borderRadius: 25,
     backgroundColor: Colors.extraLightGrayColor,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  boxInput: {
+    borderWidth: 1,
+    borderColor: "#ddd",
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 12,
+    backgroundColor: "#f5f5f5",
+    marginBottom: 15,
+    height: 45,
   },
   userImage: {
     width: 50,
@@ -144,7 +291,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   chatIcon: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
   divider: {
     height: 1,
@@ -154,7 +301,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   sectionTitle: {
-   ...Fonts.blackColor14Bold,
+    ...Fonts.blackColor14Bold,
     marginVertical: 8,
   },
   locationsContainer: {
@@ -162,28 +309,37 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   locationItem: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginBottom: 16,
   },
   locationMarker: {
     width: 24,
-    alignItems: 'center',
+    alignItems: "center",
   },
-  
+
   locationInfo: {
     flex: 1,
     marginLeft: 8,
   },
- 
+
   bottomButtons: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 16,
     borderTopWidth: 1,
-    gap:10,
+    gap: 10,
     borderTopColor: Colors.extraLightGrayColor,
   },
- 
 
+  listContainer: {
+    padding: 5,
+    flexGrow: 1,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 60,
+  },
 });
 
 export default RequestDetailScreen;
