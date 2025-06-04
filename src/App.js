@@ -37,6 +37,7 @@ import UserHome from './screens/home/userHome';
 import { selectUser } from './redux/selector/authSelector';
 import VehicleDetail from './screens/journey/vehicleDetail';
 import OrderDetailScreen from './screens/orders/orderDetailScreen';
+import AllReviewScreen from './screens/orders/allReviewScreen';
 
 const Stack = createStackNavigator();
 
@@ -58,7 +59,7 @@ function AppNavigator() {
         >
           {!user ? (
             <>
-              {/* <Stack.Screen name="RequestDetailScreen" component={RequestDetailScreen} /> */}
+              {/* <Stack.Screen name="AllReviewScreen" component={AllReviewScreen} /> */}
               <Stack.Screen name="OrderDetailScreen" component={OrderDetailScreen} />
               <Stack.Screen name="Onboarding" component={OnboardingScreen} />
               <Stack.Screen name="SignInScreen" component={SignInScreen} />

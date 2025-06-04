@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   SafeAreaView,
+  Platform,
 } from "react-native";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import {
@@ -18,18 +19,29 @@ import {
   reUsableOverlayWithButton,
 } from "../../components/commonComponents";
 import MyStatusBar from "../../components/myStatusBar";
-import { Colors, commonStyles, Fonts, Sizes } from "../../constants/styles";
+import { Colors, commonStyles, Fonts, screenWidth, Sizes } from "../../constants/styles";
 import SwipeableTabs from "../../components/swipeableTabs";
 import { ParcelCard, ParcelLoadingCard } from "../../components/parcelCard";
 import { FlatList, TextInput } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Tracking } from "../../components/tracking";
+import { Overlay } from "@rneui/themed";
 
 const OrderDetailScreen = ({ navigation }) => {
   const [isOfferModalVisible, setOfferModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [offerPrice, setOfferPrice] = useState("200");
   const [isAccepted, setIsAccepted] = useState(false);
+   const [showRateNowDialog, setshowRateNowDialog] = useState(false);
+  const [rate1, setRate1] = useState(false);
+  const [rate2, setRate2] = useState(false);
+  const [rate3, setRate3] = useState(false);
+  const [rate4, setRate4] = useState(false);
+  const [rate5, setRate5] = useState(false);
+    
+     const [rating, setRating] = useState(0);
+const [feedBack, setFeedBack] = useState("");
+
   const handleOfferSubmit = () => {};
 
   const handleCheckout = () => {
@@ -206,7 +218,106 @@ const OrderDetailScreen = ({ navigation }) => {
       </View>
     );
   };
+  function rateNowDialog() {
+    return (
+      <Overlay
+        isVisible={showRateNowDialog}
+        onBackdropPress={() => setshowRateNowDialog(false)}
+        overlayStyle={styles.dialogStyle}
+      >
+        <View>
+          <Image
+            source={require("../../../assets/images/rating.png")}
+            style={styles.ratingImageStyle}
+          />
+          <Text
+            style={{
+              ...Fonts.blackColor18Medium,
+              textAlign: "center",
+              marginHorizontal: Sizes.fixPadding * 2.0,
+            }}
+          >
+            Share Your Exprience
+          </Text>
+          {ratingInfo()}
+          <View
+                  style={{
+                    padding: 5,
+                    margin: 10,
+                    borderWidth: 1,
+                    borderColor: "#ccc",
+                    borderRadius: 4,
+                  }}
+                >
+                  <TextInput
+                    placeholder="Give a Small FeedBack..."
+                    value={feedBack}
+                    onChangeText={(text)=>setFeedBack(text)}
+                    style={{
+                      ...Fonts.blackColor12Medium,
+                      paddingTop: Sizes.fixPadding,
+                      paddingHorizontal: Sizes.fixPadding,
+                      textAlignVertical: "top",
+                      height: 100,
+                    }}
+                    placeholderTextColor={Colors.grayColor}
+                    cursorColor={Colors.primaryColor}
+                    selectionColor={Colors.extraLightGrayColor}
+                    multiline
+                  />
+                </View>
+          <View
+            style={{
+              ...commonStyles.rowAlignCenter,
+              marginTop: Sizes.fixPadding,
+            }}
+          >
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => {
+                setshowRateNowDialog(false);
+              }}
+              style={{
+                ...styles.noButtonStyle,
+                ...styles.dialogYesNoButtonStyle,
+              }}
+            >
+              <Text style={{ ...Fonts.blackColor16Medium }}>Cancel</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => {
+                setshowRateNowDialog(false);
+              }}
+              style={{
+                ...styles.yesButtonStyle,
+                ...styles.dialogYesNoButtonStyle,
+              }}
+            >
+              <Text style={{ ...Fonts.whiteColor16Medium }}>Submit</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Overlay>
+    );
+  }
 
+  function ratingInfo() {
+    return (
+    <View style={styles.ratingWrapStyle}>
+  {[1, 2, 3, 4, 5].map((star) => (
+    <MaterialIcons
+      key={star}
+      name={rating >= star ? "star" : "star-border"}
+      size={screenWidth / 12.5}
+      color={Colors.primaryColor}
+      onPress={() => setRating(star)}
+    />
+  ))}
+</View>
+
+    );
+  }
   return (
     <SafeAreaView style={styles.container}>
       <MyStatusBar />
@@ -220,7 +331,7 @@ const OrderDetailScreen = ({ navigation }) => {
       <View style={styles.bottomButtons}>
         <TouchableOpacity
           activeOpacity={0.6}
-          onPress={() => navigation.navigate("ChatScreen")}
+          onPress={() =>setshowRateNowDialog(true)}
           style={{ ...commonStyles.outlinedButton, flex: 1 }}
         >
           <Text style={commonStyles.outlinedButtonText}>Rate Order</Text>
@@ -240,6 +351,7 @@ const OrderDetailScreen = ({ navigation }) => {
         </TouchableOpacity>
 
       </View>
+      {rateNowDialog()}
       {circularLoader(isLoading)}
       {reUsableOverlayWithButton(
         offerOverlay,
@@ -348,7 +460,50 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 60,
   },
- 
+ // rating
+  dialogStyle: {
+    backgroundColor: Colors.whiteColor,
+    borderRadius: Sizes.fixPadding - 5.0,
+    width: "85%",
+    padding: 0.0,
+    elevation: 0,
+  },
+  dialogYesNoButtonStyle: {
+    flex: 1,
+    ...commonStyles.shadow,
+    borderTopWidth: Platform.OS == "ios" ? 0 : 1.0,
+    padding: Sizes.fixPadding,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  noButtonStyle: {
+    backgroundColor: Colors.whiteColor,
+    borderTopColor: Colors.extraLightGrayColor,
+    borderBottomLeftRadius: Sizes.fixPadding - 5.0,
+  },
+  yesButtonStyle: {
+    borderTopColor: Colors.primaryColor,
+    backgroundColor: Colors.primaryColor,
+    borderBottomRightRadius: Sizes.fixPadding - 5.0,
+  },
+  dialogCancelTextStyle: {
+    marginVertical: Sizes.fixPadding,
+    marginHorizontal: Sizes.fixPadding * 2.0,
+    textAlign: "center",
+    ...Fonts.blackColor18Medium,
+  },
+  ratingImageStyle: {
+    marginTop: Sizes.fixPadding * 1.5,
+    width: 70.0,
+    height: 60.0,
+    resizeMode: "contain",
+    alignSelf: "center",
+  },
+  ratingWrapStyle: {
+    ...commonStyles.rowAlignCenter,
+    justifyContent: "center",
+    marginVertical: Sizes.fixPadding + 5.0,
+  },
 });
 
 export default OrderDetailScreen;
