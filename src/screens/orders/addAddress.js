@@ -131,7 +131,8 @@ const AddAddress = () => {
           setSenderNumber,
           "Enter Sender Contact Number",
           "Sender Contact Number",
-          false
+          false,
+          "numeric"
         )}
         {textArea?.(
           senderAddress,
@@ -153,7 +154,8 @@ const AddAddress = () => {
           setRecieverNumber,
           "Enter Reciever Contact Number",
           "Reciever Contact Number",
-          false
+          false,
+          "numeric"
         )}
         {textArea?.(
           recieverAddress,

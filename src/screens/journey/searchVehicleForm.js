@@ -23,9 +23,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { showSnackbar } from "../../redux/slice/snackbarSlice";
 import { selectUser } from "../../redux/selector/authSelector";
 
+const LabeledInput = ({ label, placeholder, value, setter, required = false, style }) => (
+  <View style={[{ flex: 1 }, style]}>
+    <Text style={styles.sectionLabel}>
+      {label}
+      {required && <Text style={{ color: Colors.darkOrangeColor }}> *</Text>}
+    </Text>
+    <TextInput
+      style={styles.input}
+      placeholder={placeholder}
+      value={value}
+      onChangeText={(text) => setter(text)}
+      maxLength={80}
+      keyboardType="numeric"
+    />
+  </View>
+);
+
 const SearchVehicleForm = ({ route, navigation }) => {
   const { data } = route?.params;
-  // route?.params;
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
 
   const [selectedField, setSelectedField] = useState(null);
   const [departureDateTime, setDepartureDateTime] = useState("");
@@ -37,19 +55,10 @@ const SearchVehicleForm = ({ route, navigation }) => {
   const [length, setLength] = useState(null);
   const [lengthUnit, setLengthUnit] = useState(null);
   const [weightUnit, setWeightUnit] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   const showPicker = () => setPickerVisible(true);
   const hidePicker = () => setPickerVisible(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
-
-  const user = useSelector(selectUser);
-  // console.log("date time is ", departureDateTime);
-
-  // console.log("Data to be submitted:", data);
-
-  const handleSubmit = async () => {
-   navigation.navigate("AllJourneyList")
-  };
 
   const handleDatePick = (date) => {
     const formatted = date.toLocaleString([], {
@@ -62,184 +71,45 @@ const SearchVehicleForm = ({ route, navigation }) => {
 
     if (selectedField === "departure") {
       setDepartureDateTime(formatted);
-    } else if (selectedField === "arrival") {
+    } else {
       setArrivalDateTime(formatted);
     }
 
     hidePicker();
   };
 
-  const CapacitySection = ({
-    weightUnit,
-    setWeightUnit,
-    lengthUnit,
-    setLengthUnit,
-    weight,
-    setWeight,
-    length,
-    setLength,
-    height,
-    setHeight,
-    width,
-    setWidth,
-  }) => (
-    <>
-      <View style={styles.section}>
-        {typeSection(weightUnit, setWeightUnit, "Select Weight Unit", false, [
-          { label: "Ton", value: "Ton" },
-          { label: "kg", value: "Kg" },
-        ])}
-      </View>
-
-      <View style={styles.section}>
-        {typeSection(lengthUnit, setLengthUnit, "Select Length Unit", false, [
-          { label: "meter", value: "m" },
-          { label: "foot", value: "f" },
-          { label: "Centimeter", value: "cm" },
-        ])}
-      </View>
-
-      <View style={[styles.section, commonStyles.rowSpaceBetween]}>
-        <LabeledInput
-          label={`Weight (${weightUnit})`}
-          placeholder="Enter Weight Capacity"
-          value={weight}
-          setter={setWeight}
-          required
-          style={{ marginRight: 8 }}
-        />
-        <LabeledInput
-          label={`Length (${lengthUnit})`}
-          placeholder="Enter Length"
-          value={length}
-          setter={setLength}
-          required
-          style={{ marginLeft: 8 }}
-        />
-      </View>
-
-      <View style={[styles.section, commonStyles.rowSpaceBetween]}>
-        <LabeledInput
-          label={`Height (${lengthUnit})`}
-          placeholder="Enter Height"
-          value={height}
-          setter={setHeight}
-          required
-          style={{ marginRight: 8 }}
-        />
-        <LabeledInput
-          label={`Width (${lengthUnit})`}
-          placeholder="Enter Width"
-          value={width}
-          setter={setWidth}
-          required
-          style={{ marginLeft: 8 }}
-        />
-      </View>
-    </>
-  );
-
-  const LabeledInput = ({
-    label,
-    placeholder,
-    value,
-    setter,
-    required = false,
-    style,
-  }) => {
-    return (
-      <View style={[{ flex: 1 }, style]}>
-        <Text style={styles.sectionLabel}>
-          {label}
-          {required && (
-            <Text style={{ color: Colors.darkOrangeColor }}> *</Text>
-          )}
-        </Text>
-        <TextInput
-          style={styles.input}
-          placeholder={placeholder}
-          value={value}
-          onChangeText={(text) => setter(text)}
-          maxLength={80}
-          keyboardType="numeric"
-        />
-      </View>
-    );
+  const handleSubmit = async () => {
+    navigation.navigate("AllJourneyList");
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
       <MyStatusBar />
       {commonAppBar("Parcel Detail", navigation)}
-      {/* {locationDetail?.()} */}
-      {additionalDetail?.()}
 
-      <View
-        style={{
-          marginHorizontal: 10,
-          marginVertical: 50,
-        }}
-      >
-        {ButtonWithLoader("Search", "Processing..", isLoading, handleSubmit)}
-      </View>
-    </ScrollView>
-  );
+    
+      <View style={styles.card}>
+        <Text style={styles.sectionTitle}>Parcel Detail</Text>
 
-  function additionalDetail() {
-    return (
-      <View>
-        <View style={styles.card}>
-          <Text style={styles.sectionTitle}>Parcel Detail</Text>
-
-          <View style={styles.routeContainer}>
-            <View style={styles.timeline}>
-              <Ionicons
-                name="location"
-                size={16}
-                color={Colors.darkOrangeColor}
-              />
-           
-              <View style={styles.timelineLine} />
-               <Ionicons
-                name="location-outline"
-                size={16}
-                color={Colors.darkOrangeColor}
-              />
-            </View>
-
-            <View style={styles.addressesContainer}>
-              <Text style={styles.addressText}>
-                {trimText(data?.sourceAddress, 45)}
-              </Text>
-              <View style={{ height: 25 }} />
-              <Text style={styles.addressText}>
-                {trimText(data?.destinationAddress, 45)}
-              </Text>
-            </View>
+        <View style={styles.routeContainer}>
+          <View style={styles.timeline}>
+            <Ionicons name="location" size={16} color={Colors.darkOrangeColor} />
+            <View style={styles.timelineLine} />
+            <Ionicons name="location-outline" size={16} color={Colors.darkOrangeColor} />
           </View>
 
-          {dateTimeInfo?.()}
-          <CapacitySection
-            weightUnit={weightUnit}
-            setWeightUnit={setWeightUnit}
-            lengthUnit={lengthUnit}
-            setLengthUnit={setLengthUnit}
-            weight={weight}
-            setWeight={setWeight}
-            length={length}
-            setLength={setLength}
-            height={height}
-            setHeight={setHeight}
-            width={width}
-            setWidth={setWidth}
-          />
+          <View style={styles.addressesContainer}>
+            <Text style={styles.addressText}>
+              {trimText(data?.sourceAddress, 45)}
+            </Text>
+            <View style={{ height: 25 }} />
+            <Text style={styles.addressText}>
+              {trimText(data?.destinationAddress, 45)}
+            </Text>
+          </View>
         </View>
-      </View>
-    );
-  }
-  function dateTimeInfo() {
-    return (
-      <>
+
+        {/* Date-Time Section */}
         <Text style={styles.sectionLabel}>
           Date & Time <Text style={{ color: Colors.darkOrangeColor }}> *</Text>
         </Text>
@@ -275,10 +145,69 @@ const SearchVehicleForm = ({ route, navigation }) => {
           onConfirm={handleDatePick}
           onCancel={hidePicker}
         />
-      </>
-    );
-  }
+
+        {/* Capacity Section */}
+        <View style={styles.section}>
+          {typeSection(weightUnit, setWeightUnit, "Select Weight Unit", false, [
+            { label: "Ton", value: "Ton" },
+            { label: "kg", value: "Kg" },
+          ])}
+        </View>
+
+        <View style={styles.section}>
+          {typeSection(lengthUnit, setLengthUnit, "Select Length Unit", false, [
+            { label: "meter", value: "m" },
+            { label: "foot", value: "f" },
+            { label: "Centimeter", value: "cm" },
+          ])}
+        </View>
+
+        <View style={[styles.section, commonStyles.rowSpaceBetween]}>
+          <LabeledInput
+            label={`Weight (${weightUnit})`}
+            placeholder="Enter Weight Capacity"
+            value={weight}
+            setter={setWeight}
+            required
+            style={{ marginRight: 8 }}
+          />
+          <LabeledInput
+            label={`Length (${lengthUnit})`}
+            placeholder="Enter Length"
+            value={length}
+            setter={setLength}
+            required
+            style={{ marginLeft: 8 }}
+          />
+        </View>
+
+        <View style={[styles.section, commonStyles.rowSpaceBetween]}>
+          <LabeledInput
+            label={`Height (${lengthUnit})`}
+            placeholder="Enter Height"
+            value={height}
+            setter={setHeight}
+            required
+            style={{ marginRight: 8 }}
+          />
+          <LabeledInput
+            label={`Width (${lengthUnit})`}
+            placeholder="Enter Width"
+            value={width}
+            setter={setWidth}
+            required
+            style={{ marginLeft: 8 }}
+          />
+        </View>
+      </View>
+
+      <View style={{ marginHorizontal: 10, marginVertical: 50 }}>
+        {ButtonWithLoader("Search", "Processing..", isLoading, handleSubmit)}
+      </View>
+    </ScrollView>
+  );
 };
+
 
 export default SearchVehicleForm;
 
