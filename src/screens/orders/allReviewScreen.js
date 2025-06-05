@@ -39,7 +39,7 @@ const AllReviewScreen = ({ navigation }) => {
     <View style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
       <MyStatusBar />
       <View style={{ flex: 1 }}>
-        {commonAppBar("Request Detail", navigation)}
+        {commonAppBar("Reviews", navigation)}
         {reviewsInfo()}
       </View>
     </View>

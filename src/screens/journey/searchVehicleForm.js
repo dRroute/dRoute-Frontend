@@ -110,7 +110,7 @@ const SearchVehicleForm = ({ route, navigation }) => {
         </View>
 
         {/* Date-Time Section */}
-        <Text style={styles.sectionLabel}>
+        {/* <Text style={styles.sectionLabel}>
           Date & Time <Text style={{ color: Colors.darkOrangeColor }}> *</Text>
         </Text>
         <View style={styles.customTimeContainer}>
@@ -144,7 +144,7 @@ const SearchVehicleForm = ({ route, navigation }) => {
           mode="datetime"
           onConfirm={handleDatePick}
           onCancel={hidePicker}
-        />
+        /> */}
 
         {/* Capacity Section */}
         <View style={styles.section}>

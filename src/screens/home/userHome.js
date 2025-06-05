@@ -108,7 +108,6 @@ const UserHome = ({ navigation }) => {
     }),
   };
 
-
   const featuresList = [
     {
       title: "Your Orders",
@@ -122,7 +121,7 @@ const UserHome = ({ navigation }) => {
     },
     {
       title: "Requested Journey",
-      image: require("../../../assets/images/home.png"),
+      image: require("../../../assets/images/miniTruck.png"),
       onPress: ()=>navigation.navigate("PendingRequests"),
     },
   ];
