@@ -13,13 +13,13 @@ import { Feather } from "@expo/vector-icons";
 import { Colors, screenWidth } from "../constants/styles";
 import { trimText } from "../utils/commonMethods";
 
-export const ParcelCard = ({ parcelItem, onViewDetails }) => {
+export const ParcelCard = ({ parcelItem }) => {
   const handleCall = () => {
     Linking.openURL(`tel:${parcelItem.phone.replace(/\s/g, "")}`);
   };
 
   return (
-    <TouchableOpacity activeOpacity={0.7} style={styles.card}>
+    <View style={styles.card}>
       <View style={styles.cardContent}>
         <View style={styles.imageContainer}>
           {parcelItem.image ? (
@@ -81,7 +81,7 @@ export const ParcelCard = ({ parcelItem, onViewDetails }) => {
           <Text style={[styles.statusText, { color: "teal" }]}>Delivered</Text>
         </View>
       </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 

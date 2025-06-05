@@ -56,7 +56,7 @@ const VehicleDetail = ({ navigation }) => {
             </View>
 
             <TouchableOpacity
-              onPress={() => navigation.navigate("ChatScreen")}
+              onPress={() => navigation.navigate("AllReviewScreen")}
               style={styles.chatIcon}
             >
               <Text style={{ fontSize: 12, fontWeight: "500" }}>⭐4.5</Text>

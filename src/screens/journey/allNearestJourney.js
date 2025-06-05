@@ -62,7 +62,7 @@ const JOURNEYS = [
   },
 ];
 
-const AllJourneyList = ({ navigation }) => {
+const AllNearestJourney = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCardClick = (item) => {
@@ -72,7 +72,7 @@ const AllJourneyList = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.container}>
       <MyStatusBar />
-      {commonAppBar("All Matching Vehicles", navigation)}
+      {commonAppBar("Nearest Journey", navigation)}
 
       {/* <View style={{ marginTop: 20, marginBottom: 10, ...commonStyles.rowSpaceBetween }}>
         <Text style={{ fontSize: 14, fontWeight: "700" }}>Nearest Ongoing Vehicles:</Text>
@@ -124,4 +124,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AllJourneyList;
+export default AllNearestJourney;

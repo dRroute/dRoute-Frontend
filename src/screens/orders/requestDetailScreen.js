@@ -32,6 +32,7 @@ const RequestDetailScreen = ({ navigation }) => {
 
 const handleCheckout =()=>{
 setIsAccepted(true);
+navigation.navigate("AddAddress");
 }
   
    const image =null;

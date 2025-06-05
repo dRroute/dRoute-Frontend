@@ -62,17 +62,17 @@ const JOURNEYS = [
   },
 ];
 
-const PendingRequests = ({ navigation }) => {
+const AllSearchedJourneyList = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCardClick = (item) => {
-    navigation.navigate("RequestDetailScreen");
+    navigation.navigate("VehicleAndParcelDetail");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <MyStatusBar />
-      {commonAppBar("Requested Vehicles", navigation)}
+      {commonAppBar("All Matching Vehicles", navigation)}
 
       {/* <View style={{ marginTop: 20, marginBottom: 10, ...commonStyles.rowSpaceBetween }}>
         <Text style={{ fontSize: 14, fontWeight: "700" }}>Nearest Ongoing Vehicles:</Text>
@@ -124,4 +124,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PendingRequests;
+export default AllSearchedJourneyList;

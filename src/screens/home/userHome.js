@@ -107,25 +107,23 @@ const UserHome = ({ navigation }) => {
       extrapolate: "clamp",
     }),
   };
-  const feature1 = () => {
-    console.log("clicked feature1");
-  };
+
 
   const featuresList = [
     {
       title: "Your Orders",
       image: require("../../../assets/images/box.jpg"),
-      onPress: feature1,
+      onPress: ()=>navigation.navigate("AllOrders"),
     },
     {
       title: "Estimate Price",
       image: require("../../../assets/images/calci.png"),
-      onPress: feature1,
+       onPress: ()=>navigation.navigate("OrderDetailScreen"),
     },
     {
-      title: "Addresses",
+      title: "Requested Journey",
       image: require("../../../assets/images/home.png"),
-      onPress: feature1,
+      onPress: ()=>navigation.navigate("PendingRequests"),
     },
   ];
 
@@ -208,6 +206,7 @@ const UserHome = ({ navigation }) => {
               <Text style={{ fontSize: 14, fontWeight: "700" }}>
                 Nearest Ongoing Vehicles:{" "}
               </Text>
+              <TouchableOpacity onPress={()=>navigation.navigate("AllNearestJourney")}>
               <Text
                 style={{
                   fontSize: 14,
@@ -216,7 +215,7 @@ const UserHome = ({ navigation }) => {
                 }}
               >
                 See All
-              </Text>
+              </Text></TouchableOpacity>
             </View>
              {isLoading ? (
                    <JourneyCardSkeleton count={5} />
@@ -317,7 +316,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     fontWeight: "700",
     textAlign: "center",
-    maxWidth: 70,
+    maxWidth: 60,
   }, emptyContainer: {
     flex: 1,
     justifyContent: "center",

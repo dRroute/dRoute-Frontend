@@ -12,7 +12,7 @@ import ForgetPassword from './screens/auth/forgetPassword';
 import CompleteProfileForm from './screens/completeProfile/completeProfileForm';
 import SearchVehicleForm from './screens/journey/searchVehicleForm';
 import Home from './screens/home/home';
-import AllJourneyList from './screens/journey/allJourneyList';
+import AllSearchedJourneyList from './screens/journey/allSearchedJourneyList';
 import BottomNavigationBar from './components/bottomNavigationBar';
 import TermsAndConditionsScreen from './screens/profile/termsAndCondition';
 import PrivacyPolicyScreen from './screens/profile/privacyPolicy';
@@ -22,9 +22,9 @@ import ChatScreen from './screens/chatScreen/chatScreen';
 import PendingRequests from './screens/orders/pendingRequests';
 import HelpScreen from './screens/support/helpScreen';
 import AllSupportTickets from './screens/support/allSupportTickets';
-import AllParcelsInJourney from './screens/orders/AllParcelsInJourney';
+import AllOrders from './screens/orders/allOrders';
 import LocationPickerScreen from './screens/journey/locationPicker';
-import CurrentJourney from './screens/journey/currentJourney';
+import AllNearestJourney from './screens/journey/allNearestJourney';
 import RequestDetailScreen from './screens/orders/requestDetailScreen';
 import store from './redux/store/store';
 import Snackbar from './components/snackbar';
@@ -32,12 +32,13 @@ import InstructionToComplete from './screens/completeProfile/instructionToComple
 import PendingForApprovalScreen from './screens/completeProfile/pendingForApproval';
 import profileStatusScreen from './screens/completeProfile/pendingAccountScreen';
 import VehicleAndParcelDetail from './screens/journey/vehicleAndParcelDetail';
-import PreviousJourneyDetail from './screens/journey/previousJourneyDetail';
+
 import UserHome from './screens/home/userHome';
 import { selectUser } from './redux/selector/authSelector';
 import VehicleDetail from './screens/journey/vehicleDetail';
 import OrderDetailScreen from './screens/orders/orderDetailScreen';
 import AllReviewScreen from './screens/orders/allReviewScreen';
+import AddAddress from './screens/orders/addAddress';
 
 const Stack = createStackNavigator();
 
@@ -59,8 +60,6 @@ function AppNavigator() {
         >
           {!user ? (
             <>
-              {/* <Stack.Screen name="AllReviewScreen" component={AllReviewScreen} /> */}
-              {/* <Stack.Screen name="OrderDetailScreen" component={OrderDetailScreen} /> */}
               <Stack.Screen name="Onboarding" component={OnboardingScreen} />
               <Stack.Screen name="SignInScreen" component={SignInScreen} />
               <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
@@ -76,17 +75,19 @@ function AppNavigator() {
                <Stack.Screen name="VehicleDetail" component={VehicleDetail} />
               <Stack.Screen name="UserHome" component={UserHome} />
                <Stack.Screen name="SearchVehicleForm" component={SearchVehicleForm} />
-              <Stack.Screen name="AllJourneyList" component={AllJourneyList} />
-              <Stack.Screen name="PreviousJourneyDetail" component={PreviousJourneyDetail} />
+              <Stack.Screen name="AllJourneyList" component={AllSearchedJourneyList} />
               <Stack.Screen name="PrivacyPolicyScreen" component={PrivacyPolicyScreen} />
               <Stack.Screen name="TermsAndConditionsScreen" component={TermsAndConditionsScreen} />
               <Stack.Screen name="ChangePassword" component={ChangePassword} />
               <Stack.Screen name="EditProfile" component={EditProfile} />
               <Stack.Screen name="ChatScreen" component={ChatScreen} />
               <Stack.Screen name="PendingRequests" component={PendingRequests} />
-              <Stack.Screen name="AllParcelsInJourney" component={AllParcelsInJourney} />
+              <Stack.Screen name="AllOrders" component={AllOrders} />
+               <Stack.Screen name="OrderDetailScreen" component={OrderDetailScreen} />
+                <Stack.Screen name="AddAddress" component={AddAddress} />
+                <Stack.Screen name="AllReviewScreen" component={AllReviewScreen} />
               <Stack.Screen name="LocationPickerScreen" component={LocationPickerScreen} />
-              <Stack.Screen name="CurrentJourney" component={CurrentJourney} />
+              <Stack.Screen name="AllNearestJourney" component={AllNearestJourney} />
               <Stack.Screen name="RequestDetailScreen" component={RequestDetailScreen} />
               <Stack.Screen name="AllSupportTickets" component={AllSupportTickets} />
               <Stack.Screen name="HelpScreen" component={HelpScreen} />

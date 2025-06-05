@@ -33,12 +33,6 @@ const OrderDetailScreen = ({ navigation }) => {
   const [offerPrice, setOfferPrice] = useState("200");
   const [isAccepted, setIsAccepted] = useState(false);
    const [showRateNowDialog, setshowRateNowDialog] = useState(false);
-  const [rate1, setRate1] = useState(false);
-  const [rate2, setRate2] = useState(false);
-  const [rate3, setRate3] = useState(false);
-  const [rate4, setRate4] = useState(false);
-  const [rate5, setRate5] = useState(false);
-    
      const [rating, setRating] = useState(0);
 const [feedBack, setFeedBack] = useState("");
 
