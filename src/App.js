@@ -67,11 +67,12 @@ function AppNavigator() {
               <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
               <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
             </>
-            ) : user.profileStatus === 'PENDING_COMPLETION' ? (
+            ) : user.profileStatus === 'ACTIVE' ? (
              <>
-               <Stack.Screen name="AddAddress" component={AddAddress} />
+              
               <Stack.Screen name="BottomNavigationBar" component={BottomNavigationBar} />
                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="AddAddress" component={AddAddress} />
               <Stack.Screen name="VehicleAndParcelDetail" component={VehicleAndParcelDetail} />
                <Stack.Screen name="VehicleDetail" component={VehicleDetail} />
               <Stack.Screen name="UserHome" component={UserHome} />
