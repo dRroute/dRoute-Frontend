@@ -37,7 +37,7 @@ const SignInScreen = ({ navigation }) => {
     }
   };
   const handleSignIn = async () => {
-   
+
     const data = {
       emailOrPhone: emailOrPhone,
       password: password,
@@ -52,18 +52,18 @@ const SignInScreen = ({ navigation }) => {
       );
       return;
     }
- setIsLoading(true);
+    setIsLoading(true);
     try {
       const response = await dispatch(signIn(data));
       if (signIn.fulfilled.match(response)) {
         await AsyncStorage.setItem(
-          "driver_id",
-          String(response?.payload?.data?.driverId)
+          "user_id",
+          String(response?.payload?.data?.userId)
         );
 
-        const savedId = await AsyncStorage.getItem("driver_id");
+        const savedId = await AsyncStorage.getItem("user_id");
         console.log("driver id saved in storage", savedId);
-         await dispatch(
+        await dispatch(
           showSnackbar({
             message: response?.payload?.message,
             type: "success",

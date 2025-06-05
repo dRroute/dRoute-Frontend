@@ -4,7 +4,7 @@ import { Alert } from "react-native";
 import Key from "../constants/key";
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/selector/authSelector";
-import { uploadSingleDocument } from "../redux/thunk/documentThunk";
+import { uploadSingleDocument } from "../redux/thunk/courierThunk";
 import { showSnackbar } from "../redux/slice/snackbarSlice";
 export const setupImagePicker = (file, label) => {
   // console.log("inside setup image");

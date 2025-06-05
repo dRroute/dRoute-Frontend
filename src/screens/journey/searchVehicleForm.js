@@ -22,6 +22,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { showSnackbar } from "../../redux/slice/snackbarSlice";
 import { selectUser } from "../../redux/selector/authSelector";
+import { postCourier } from "../../redux/thunk/courierThunk";
 
 const LabeledInput = ({ label, placeholder, value, setter, required = false, style }) => (
   <View style={[{ flex: 1 }, style]}>
@@ -46,8 +47,7 @@ const SearchVehicleForm = ({ route, navigation }) => {
   const user = useSelector(selectUser);
 
   const [selectedField, setSelectedField] = useState(null);
-  const [departureDateTime, setDepartureDateTime] = useState("");
-  const [arrivalDateTime, setArrivalDateTime] = useState("");
+
   const [isPickerVisible, setPickerVisible] = useState(false);
   const [weight, setWeight] = useState(null);
   const [height, setHeight] = useState(null);
@@ -56,30 +56,86 @@ const SearchVehicleForm = ({ route, navigation }) => {
   const [lengthUnit, setLengthUnit] = useState(null);
   const [weightUnit, setWeightUnit] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [parcelValue, setParcelValue] = useState(null)
 
-  const showPicker = () => setPickerVisible(true);
-  const hidePicker = () => setPickerVisible(false);
-
-  const handleDatePick = (date) => {
-    const formatted = date.toLocaleString([], {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-
-    if (selectedField === "departure") {
-      setDepartureDateTime(formatted);
-    } else {
-      setArrivalDateTime(formatted);
-    }
-
-    hidePicker();
-  };
 
   const handleSubmit = async () => {
+
+    console.log("data in search vehicle form", data);
+    //add validation for weight, height, width, length, weightUnit and lengthUnit
+    if (!weight || !height || !width || !length || !weightUnit || !lengthUnit || !parcelValue ||
+      !data?.sourceAddress || !data?.destinationAddress
+      || !data?.sourceCoordinate || !data?.destinationCoordinate
+    ) {
+      await dispatch(
+        showSnackbar({
+          message: "Please fill all the required fields",
+          type: "error",
+          time: 2000,
+        })
+      );
+      return;
+    }
+
+
+    const CourierData = {
+      userId: user?.userId,
+      courierSourceAddress: data?.sourceAddress,
+      courierSourceCoordinate: `${data?.sourceCoordinate?.latitude},${data?.sourceCoordinate?.longitude}`,
+      courierDestinationAddress: data?.destinationAddress,
+      courierDestinationCoordinate: `${data?.destinationCoordinate?.latitude},${data?.destinationCoordinate?.longitude}`,
+      courierHeight: parseFloat(height),
+      courierWidth: parseFloat(width),
+      courierLength: parseFloat(length),
+      courierDimensionUnit: lengthUnit,
+      courierWeight: parseFloat(weight),
+      courierWeightUnit: weightUnit,
+      courierValue: parcelValue,
+    };
+
+    console.log('CourierData in search vehicle form', CourierData);
+
+    try {
+
+
+      const response = await dispatch(postCourier(CourierData));
+
+      if (postCourier.fulfilled.match(response)) {
+        console.log("Courier posted successfully, now searching for Journey");
+        await dispatch(
+          showSnackbar({
+            message: response?.payload?.message,
+            type: "success",
+            time: 2000,
+          })
+        );
+      } else {
+        console.log("Courier posting failed", response?.payload?.message);
+        await dispatch(
+          showSnackbar({
+            message: response?.payload?.message || "Courier posting failed",
+            type: "error",
+            time: 2000,
+          })
+        );
+      }
+
+    } catch (error) {
+
+      console.log("Error in posting courier", error);
+      await dispatch(
+        showSnackbar({
+          message: error?.message || "Something went wrong while posting courier. Please try again after sometime.",
+          type: "error",
+          time: 2000,
+        })
+      );
+
+    }
     navigation.navigate("AllJourneyList");
+
+
+    // navigation.navigate("AllJourneyList");
   };
 
   return (
@@ -87,7 +143,7 @@ const SearchVehicleForm = ({ route, navigation }) => {
       <MyStatusBar />
       {commonAppBar("Parcel Detail", navigation)}
 
-    
+
       <View style={styles.card}>
         <Text style={styles.sectionTitle}>Parcel Detail</Text>
 
@@ -109,48 +165,11 @@ const SearchVehicleForm = ({ route, navigation }) => {
           </View>
         </View>
 
-        {/* Date-Time Section */}
-        {/* <Text style={styles.sectionLabel}>
-          Date & Time <Text style={{ color: Colors.darkOrangeColor }}> *</Text>
-        </Text>
-        <View style={styles.customTimeContainer}>
-          <TouchableOpacity
-            style={styles.timeInput}
-            onPress={() => {
-              setSelectedField("departure");
-              showPicker();
-            }}
-          >
-            <Text style={{ fontSize: 12, textAlign: "center" }}>
-              {departureDateTime || "Departure Time"}
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.timeInput}
-            onPress={() => {
-              setSelectedField("arrival");
-              showPicker();
-            }}
-          >
-            <Text style={{ fontSize: 12, textAlign: "center" }}>
-              {arrivalDateTime || "Arrival Time"}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <DateTimePickerModal
-          isVisible={isPickerVisible}
-          mode="datetime"
-          onConfirm={handleDatePick}
-          onCancel={hidePicker}
-        /> */}
-
         {/* Capacity Section */}
         <View style={styles.section}>
           {typeSection(weightUnit, setWeightUnit, "Select Weight Unit", false, [
             { label: "Ton", value: "Ton" },
-            { label: "kg", value: "Kg" },
+            { label: "kg", value: "kg" },
           ])}
         </View>
 
@@ -197,6 +216,14 @@ const SearchVehicleForm = ({ route, navigation }) => {
             setter={setWidth}
             required
             style={{ marginLeft: 8 }}
+          />
+          <LabeledInput
+            label={`Parcel Value (₹)`}
+            placeholder="Enter in INR"
+            value={parcelValue}
+            setter={setParcelValue}
+            required
+            style={{ marginRight: 8 }}
           />
         </View>
       </View>
@@ -251,7 +278,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 8,
   },
- 
+
   timelineLine: {
     width: 1,
     height: 18,

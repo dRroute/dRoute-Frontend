@@ -72,7 +72,7 @@ const SignUpScreen = ({ navigation }) => {
       password: password,
       confirmPassword: confirmPassword,
       contactNo: mobileNumber,
-      role: "driver",
+      role: "user",
     };
     const validationError = validateForm(data);
     if (validationError) {

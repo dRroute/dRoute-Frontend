@@ -5,12 +5,12 @@ import { apiPutRequest } from "../http/put";
 import Key from "../../constants/key"; // Import Key object
 
 // Constants
-const { DRIVER_API_URL } = Key;
+const { USER_API_URL } = Key;
 // API CALLS
-export const uploadSingleDocumentAPI = (data) =>
+export const postCourierAPI = (data) =>
   apiPostRequest({
-    apiUrl: `${DRIVER_API_URL}/document/uploadToGoogleDrive?driverId=${data?.driverId}&documentName=${data?.documentName}`,
-    content_type: "multipart/form-data",
-    data: data?.file,
+    apiUrl: `${USER_API_URL}/courier`,
+    content_type: "application/json",
+    data,
     accessToken: null,
   });
