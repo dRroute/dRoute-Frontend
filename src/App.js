@@ -39,6 +39,7 @@ import VehicleDetail from './screens/journey/vehicleDetail';
 import OrderDetailScreen from './screens/orders/orderDetailScreen';
 import AllReviewScreen from './screens/orders/allReviewScreen';
 import AddAddress from './screens/orders/addAddress';
+import PaymentGatewayScreen from './screens/orders/paymentGateway';
 
 const Stack = createStackNavigator();
 
@@ -66,9 +67,9 @@ function AppNavigator() {
               <Stack.Screen name="VerificationScreen" component={VerificationScreen} />
               <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
             </>
-            ) : user.profileStatus === 'ACTIVE' ? (
+            ) : user.profileStatus === 'PENDING_COMPLETION' ? (
              <>
-              
+               <Stack.Screen name="AddAddress" component={AddAddress} />
               <Stack.Screen name="BottomNavigationBar" component={BottomNavigationBar} />
                <Stack.Screen name="Home" component={Home} />
               <Stack.Screen name="VehicleAndParcelDetail" component={VehicleAndParcelDetail} />
@@ -84,7 +85,7 @@ function AppNavigator() {
               <Stack.Screen name="PendingRequests" component={PendingRequests} />
               <Stack.Screen name="AllOrders" component={AllOrders} />
                <Stack.Screen name="OrderDetailScreen" component={OrderDetailScreen} />
-                <Stack.Screen name="AddAddress" component={AddAddress} />
+                <Stack.Screen name="PaymentGatewayScreen" component={PaymentGatewayScreen} />
                 <Stack.Screen name="AllReviewScreen" component={AllReviewScreen} />
               <Stack.Screen name="LocationPickerScreen" component={LocationPickerScreen} />
               <Stack.Screen name="AllNearestJourney" component={AllNearestJourney} />

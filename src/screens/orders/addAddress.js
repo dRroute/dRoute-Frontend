@@ -41,7 +41,8 @@ import {
 } from "../../constants/regex";
 import { completeProfile } from "../../redux/thunk/authThunk";
 import { showSnackbar } from "../../redux/slice/snackbarSlice";
-
+import RazorpayCheckout from "react-native-razorpay";
+import { LottieSuccess } from "../../components/lottieLoader/loaderView";
 const AddAddress = () => {
   const [imageloading, setImageLoading] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -61,6 +62,34 @@ const AddAddress = () => {
   const [senderNumber, setSenderNumber] = useState(null);
   const [parcelImageURI, setParcelImageURI] = useState(null);
 
+
+
+  const payNow = () => {
+    var options = {
+      description: "dRoute Payment",
+      image: "https://images.unsplash.com/photo-1743930285940-4ffe9e29007c?q=80&w=2089&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      currency: "INR",
+      key: "rzp_test_mRycTme6Oywrj1", // Replace with your Razorpay API key
+      amount: "500", // amount in paise (5000 = Rs 50)
+      name: "dRoute",
+      prefill: {
+        email: "thealoksinghh@gmail.com",
+        contact: "9708571269",
+        name: "Alok singh",
+      },
+      theme: { color: "#083c5d" },
+    };
+
+    RazorpayCheckout.open(options)
+      .then((data) => {
+        // handle success
+        Alert.alert(`Success: ${data.razorpay_payment_id}`);
+      })
+      .catch((error) => {
+        // handle failure
+        Alert.alert(`Error =>: ${error.code} | ${error.description}`);
+      });
+  };
   const validateForm = () => {
     return null;
   };
@@ -117,7 +146,9 @@ const AddAddress = () => {
   return (
     <View style={styles.mainContainer}>
       <MyStatusBar />
+
       {commonAppBar("Add Address", navigation)}
+      
       <ScrollView contentContainerStyle={styles.container}>
         {inputBox?.(
           senderName,
@@ -141,6 +172,7 @@ const AddAddress = () => {
           "Address",
           false
         )}
+        
         {inputBox?.(
           recieverName,
           setRecieverName,
@@ -168,7 +200,7 @@ const AddAddress = () => {
         {imageSection?.()}
         <TouchableOpacity
           style={{ ...commonStyles.button, marginBottom: 50 }}
-          onPress={handleSubmit}
+          onPress={()=>navigation.navigate("PaymentGatewayScreen")}
         >
           <Text style={{ ...commonStyles.buttonText }}>Pay Now</Text>
         </TouchableOpacity>
@@ -183,6 +215,7 @@ const AddAddress = () => {
           dispatch={dispatch}
         />
       </ScrollView>
+      
       {circularLoader(isLoading)}
     </View>
   );
