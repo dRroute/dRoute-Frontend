@@ -1,6 +1,6 @@
-import React, { useEffect } from "react";
-import { View, StyleSheet ,KeyboardAvoidingView,Platform} from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
+import { useEffect } from "react";
+import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -8,45 +8,42 @@ import {
   TransitionPresets,
 } from "@react-navigation/stack";
 import { Provider, useDispatch, useSelector } from "react-redux";
-import OnboardingScreen from "./screens/onBoardingScreens/onBoardingScreen";
-import MyStatusBar from "./components/myStatusBar";
-import SignUpScreen from "./screens/auth/signUp";
-import SignInScreen from "./screens/auth/signIn";
-import VerificationScreen from "./screens/auth/verificationScreen";
-import ForgetPassword from "./screens/auth/forgetPassword";
-import CompleteProfileForm from "./screens/completeProfile/completeProfileForm";
-import SearchVehicleForm from "./screens/journey/searchVehicleForm";
-import Home from "./screens/home/home";
-import AllSearchedJourneyList from "./screens/journey/allSearchedJourneyList";
 import BottomNavigationBar from "./components/bottomNavigationBar";
-import TermsAndConditionsScreen from "./screens/profile/termsAndCondition";
-import PrivacyPolicyScreen from "./screens/profile/privacyPolicy";
+import MyStatusBar from "./components/myStatusBar";
+import Snackbar from "./components/snackbar";
+import store from "./redux/store/store";
+import ForgetPassword from "./screens/auth/forgetPassword";
+import SignInScreen from "./screens/auth/signIn";
+import SignUpScreen from "./screens/auth/signUp";
+import VerificationScreen from "./screens/auth/verificationScreen";
+import ChatScreen from "./screens/chatScreen/chatScreen";
+import profileStatusScreen from "./screens/completeProfile/pendingAccountScreen";
+import Home from "./screens/home/home";
+import AllNearestJourney from "./screens/journey/allNearestJourney";
+import AllSearchedJourneyList from "./screens/journey/allSearchedJourneyList";
+import LocationPickerScreen from "./screens/journey/locationPicker";
+import SearchVehicleForm from "./screens/journey/searchVehicleForm";
+import VehicleAndParcelDetail from "./screens/journey/vehicleAndParcelDetail";
+import OnboardingScreen from "./screens/onBoardingScreens/onBoardingScreen";
+import AllOrders from "./screens/orders/allOrders";
+import PendingRequests from "./screens/orders/pendingRequests";
+import RequestDetailScreen from "./screens/orders/requestDetailScreen";
 import ChangePassword from "./screens/profile/changePassword";
 import EditProfile from "./screens/profile/editProfile";
-import ChatScreen from "./screens/chatScreen/chatScreen";
-import PendingRequests from "./screens/orders/pendingRequests";
-import HelpScreen from "./screens/support/helpScreen";
+import PrivacyPolicyScreen from "./screens/profile/privacyPolicy";
+import TermsAndConditionsScreen from "./screens/profile/termsAndCondition";
 import AllSupportTickets from "./screens/support/allSupportTickets";
-import AllOrders from "./screens/orders/allOrders";
-import LocationPickerScreen from "./screens/journey/locationPicker";
-import AllNearestJourney from "./screens/journey/allNearestJourney";
-import RequestDetailScreen from "./screens/orders/requestDetailScreen";
-import store from "./redux/store/store";
-import Snackbar from "./components/snackbar";
-import InstructionToComplete from "./screens/completeProfile/instructionToComplete";
-import PendingForApprovalScreen from "./screens/completeProfile/pendingForApproval";
-import profileStatusScreen from "./screens/completeProfile/pendingAccountScreen";
-import VehicleAndParcelDetail from "./screens/journey/vehicleAndParcelDetail";
+import HelpScreen from "./screens/support/helpScreen";
 
-import UserHome from "./screens/home/userHome";
 import { selectUser } from "./redux/selector/authSelector";
-import VehicleDetail from "./screens/journey/vehicleDetail";
-import OrderDetailScreen from "./screens/orders/orderDetailScreen";
-import AllReviewScreen from "./screens/orders/allReviewScreen";
-import AddAddress from "./screens/orders/addAddress";
-import PaymentGatewayScreen from "./screens/orders/paymentGateway";
+import UserHome from "./screens/home/userHome";
 import AllSavedParcels from "./screens/journey/allSavedParcels";
 import SearchJourneyByName from "./screens/journey/searchJourneyByName";
+import VehicleDetail from "./screens/journey/vehicleDetail";
+import AddAddress from "./screens/orders/addAddress";
+import AllReviewScreen from "./screens/orders/allReviewScreen";
+import OrderDetailScreen from "./screens/orders/orderDetailScreen";
+import PaymentGatewayScreen from "./screens/orders/paymentGateway";
 
 const Stack = createStackNavigator();
 
@@ -96,7 +93,7 @@ function AppNavigator() {
               component={SearchVehicleForm}
             />
             <Stack.Screen
-              name="AllJourneyList"
+              name="AllSearchedJourneyList"
               component={AllSearchedJourneyList}
             />
             <Stack.Screen
