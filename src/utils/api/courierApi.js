@@ -17,7 +17,7 @@ export const postCourierAPI = (data) =>
 
   //For filtering journeys by courier ID
 export const filterJourneyByCourierIdAPI = (courierId) =>
-  apiPostRequest({
+  apiGetRequest({
     apiUrl: `${USER_API_URL}/courier/${courierId}/journeys`,
     content_type: "application/json",
     data: null, 

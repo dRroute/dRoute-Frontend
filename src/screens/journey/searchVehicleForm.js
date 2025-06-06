@@ -21,7 +21,7 @@ import { Colors, commonStyles, Sizes } from "../../constants/styles";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useDispatch, useSelector } from "react-redux";
 import { showSnackbar } from "../../redux/slice/snackbarSlice";
-import { selectUser } from "../../redux/selector/authSelector";
+import { selectAuthloader, selectUser } from "../../redux/selector/authSelector";
 import { postCourier } from "../../redux/thunk/courierThunk";
 
 const LabeledInput = ({ label, placeholder, value, setter, required = false, style }) => (
@@ -55,10 +55,10 @@ const SearchVehicleForm = ({ route, navigation }) => {
   const [length, setLength] = useState(null);
   const [lengthUnit, setLengthUnit] = useState(null);
   const [weightUnit, setWeightUnit] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
   const [parcelValue, setParcelValue] = useState(null)
 
-
+  const isLoading=useSelector(selectAuthloader);
   const handleSubmit = async () => {
 
     console.log("data in search vehicle form", data);

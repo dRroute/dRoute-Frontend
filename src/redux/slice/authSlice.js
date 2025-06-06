@@ -80,7 +80,7 @@ const authSlice = createSlice({
     })
     .addCase(postCourier.fulfilled, (state, action) => {
       state.loading = false;
-      console.log("Courier posted successfully", action?.payload?.data);
+      console.log("Courier posted successfullyyy", action?.payload?.data);
       state.couriers.push(action.payload.data); // Assuming payload contains the new courier data
     })
     .addCase(postCourier.rejected, (state, action) => {

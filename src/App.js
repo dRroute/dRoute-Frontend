@@ -17,7 +17,6 @@ import SignInScreen from "./screens/auth/signIn";
 import SignUpScreen from "./screens/auth/signUp";
 import VerificationScreen from "./screens/auth/verificationScreen";
 import ChatScreen from "./screens/chatScreen/chatScreen";
-import profileStatusScreen from "./screens/completeProfile/pendingAccountScreen";
 import Home from "./screens/home/home";
 import AllNearestJourney from "./screens/journey/allNearestJourney";
 import AllSearchedJourneyList from "./screens/journey/allSearchedJourneyList";
@@ -44,6 +43,7 @@ import AddAddress from "./screens/orders/addAddress";
 import AllReviewScreen from "./screens/orders/allReviewScreen";
 import OrderDetailScreen from "./screens/orders/orderDetailScreen";
 import PaymentGatewayScreen from "./screens/orders/paymentGateway";
+import PendingAccountScreen from "./screens/profile/pendingAccountScreen";
 
 const Stack = createStackNavigator();
 
@@ -141,10 +141,7 @@ function AppNavigator() {
           </>
         ) : (
           <>
-            <Stack.Screen
-              name="profileStatusScreen"
-              component={profileStatusScreen}
-            />
+            <Stack.Screen name="PendingAccountScreen" component={PendingAccountScreen} />
             <Stack.Screen name="HelpScreen" component={HelpScreen} />
           </>
         )}

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { postCourierAPI } from "../../utils/api/courierApi";
+import { filterJourneyByCourierIdAPI, postCourierAPI } from "../../utils/api/courierApi";
 import { handleAxiosError } from "./authThunk";
 
 // Upload Single File Thunk

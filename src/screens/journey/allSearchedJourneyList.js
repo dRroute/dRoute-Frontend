@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -73,24 +73,34 @@ const AllSearchedJourneyList = ({ navigation, route }) => {
 
 // Fetch journeys by courier ID when the component mounts
   // This will only run once when the component is mounted
-  useEffect(async () => {
+useEffect(() => {
+  let isMounted = true; // Prevent state updates if unmounted
+
+  const fetchJourneys = async () => {
     if (filteredJourneys.length === 0) {
       setIsLoading(true);
       const response = await dispatch(filterJourneyByCourierId(courierId));
       if (filterJourneyByCourierId.fulfilled.match(response)) {
-        setFilteredJourneys(response?.payload);
+        if (isMounted) setFilteredJourneys(response?.payload?.data);
 
-       await dispatch(
+        await dispatch(
           showSnackbar({
             message: response?.payload?.message,
             type: "success",
             time: 2000,
           })
-          )
-
+        );
       }
+      if (isMounted) setIsLoading(false);
     }
-    }, []);
+  };
+  fetchJourneys();
+
+  return () => {
+    isMounted = false;
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
 
 
   const handleCardClick = (item) => {
@@ -111,8 +121,8 @@ const AllSearchedJourneyList = ({ navigation, route }) => {
         <JourneyCardSkeleton count={5} />
       ) : (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {JOURNEYS.length > 0 ? (
-            JOURNEYS.map((item) => (
+          {filteredJourneys.length > 0 ? (
+            filteredJourneys.map((item) => (
               <TouchableOpacity activeOpacity={0.8} key={item.id} onPress={() => handleCardClick(item)}>
                 <JourneyCard data={item} />
               </TouchableOpacity>
