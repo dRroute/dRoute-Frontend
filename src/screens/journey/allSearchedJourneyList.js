@@ -16,6 +16,8 @@ import { commonAppBar } from "../../components/commonComponents";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import MyStatusBar from "../../components/myStatusBar";
 import { JourneyCardSkeleton, JourneyCard } from "../../components/userSideJourneyCard";
+import { filterJourneyByCourierId } from "../../redux/thunk/courierThunk";
+import { useDispatch } from "react-redux";
 
 const JOURNEYS = [
   {
@@ -32,7 +34,7 @@ const JOURNEYS = [
     weightCapacity: "200 kg",
     volumeCapacity: "30 m^3",
   },
-   {
+  {
     id: "2",
     avatar: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
     driverName: "Driver Name",
@@ -46,7 +48,7 @@ const JOURNEYS = [
     weightCapacity: "200 kg",
     volumeCapacity: "30 m^3",
   },
-   {
+  {
     id: "3",
     avatar: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
     driverName: "Driver Name",
@@ -62,8 +64,34 @@ const JOURNEYS = [
   },
 ];
 
-const AllSearchedJourneyList = ({ navigation }) => {
+const AllSearchedJourneyList = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { courierId } = route?.params
+  const dispatch = useDispatch();
+  const [filteredJourneys, setFilteredJourneys] = useState([]);
+
+
+// Fetch journeys by courier ID when the component mounts
+  // This will only run once when the component is mounted
+  useEffect(async () => {
+    if (filteredJourneys.length === 0) {
+      setIsLoading(true);
+      const response = await dispatch(filterJourneyByCourierId(courierId));
+      if (filterJourneyByCourierId.fulfilled.match(response)) {
+        setFilteredJourneys(response?.payload);
+
+       await dispatch(
+          showSnackbar({
+            message: response?.payload?.message,
+            type: "success",
+            time: 2000,
+          })
+          )
+
+      }
+    }
+    }, []);
+
 
   const handleCardClick = (item) => {
     navigation.navigate("VehicleAndParcelDetail");

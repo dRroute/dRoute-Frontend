@@ -109,6 +109,12 @@ const SearchVehicleForm = ({ route, navigation }) => {
             time: 2000,
           })
         );
+
+        //After successful posting, navigate to AllJourneyList
+        navigation.navigate("AllSearchedJourneyList", {
+          courierId: response?.payload?.data?.courierId,
+        });
+        return;
       } else {
         console.log("Courier posting failed", response?.payload?.message);
         await dispatch(
@@ -132,7 +138,8 @@ const SearchVehicleForm = ({ route, navigation }) => {
       );
 
     }
-    navigation.navigate("AllJourneyList");
+
+
 
 
     // navigation.navigate("AllJourneyList");

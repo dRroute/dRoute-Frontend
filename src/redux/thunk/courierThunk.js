@@ -16,3 +16,21 @@ export const postCourier = createAsyncThunk(
     }
   }
 );
+
+// Upload Single File Thunk
+export const filterJourneyByCourierId = createAsyncThunk(
+  "document/upload",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await filterJourneyByCourierIdAPI(data);
+      return response?.data;
+
+    } catch (error) {
+      console.log("Error in postCourier Thunk:", error);
+      return rejectWithValue(handleAxiosError(error));
+    }
+  }
+);
+
+
+
