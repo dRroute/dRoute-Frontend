@@ -8,7 +8,11 @@ import {
   ActivityIndicator,
   FlatList,
   Image,
+  Keyboard,
   Alert,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -183,69 +187,79 @@ const handleRefresh = () => {
     );
   };
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.appBar}>
-        <View style={styles.profile}>
-          <View style={styles.avatarPlaceholder}>
-            <Ionicons name="person" size={24} color={Colors.bodyBackColor} />
+return (
+  <KeyboardAvoidingView
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+    style={{ flex: 1 }}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 80 :40}
+  >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <View style={styles.appBar}>
+          <View style={styles.profile}>
+            <View style={styles.avatarPlaceholder}>
+              <Ionicons name="person" size={24} color={Colors.bodyBackColor} />
+            </View>
+            <View>
+              <Text style={styles.userName}>Dummy User</Text>
+              <Text style={styles.userPhone}>+91 567898765</Text>
+            </View>
           </View>
-          <View>
-            <Text style={styles.userName}>Dummy User</Text>
-            <Text style={styles.userPhone}>+91 567898765</Text>
-          </View>
+
+          {deleteItem ? (
+            <TouchableOpacity onPress={() => deleteMessage(deleteItem)}>
+              <Ionicons name="trash" size={24} color={Colors.darkOrangeColor} />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={handleRefresh}>
+              <Animated.View style={{ transform: [{ rotate: spin }] }}>
+                <Ionicons name="refresh" size={24} color={Colors.primaryColor} />
+              </Animated.View>
+            </TouchableOpacity>
+          )}
         </View>
-         {deleteItem && (
-          <TouchableOpacity  onPress={() => deleteMessage(deleteItem)}>
-          <Ionicons name="trash" size={24} color={Colors.darkOrangeColor} />
-          </TouchableOpacity>
-         )}
-        {!deleteItem && (
-          <TouchableOpacity onPress={handleRefresh} >
-            <Animated.View style={{ transform: [{ rotate: spin }] }}>
-              <Ionicons name="refresh" size={24} color={Colors.primaryColor} />
-            </Animated.View>
-          </TouchableOpacity>
-        )}
-      </View>
-      <TouchableOpacity
-        activeOpacity={1}
-        onPress={() => setDeleteItem(null)}
-        style={styles.container}
-      >
-        <FlatList
-          data={messages}
-          keyExtractor={(item) => item.id}
-          renderItem={renderMessage}
-          contentContainerStyle={{ padding: 10 }}
-          inverted
-        />
 
-        <View style={styles.inputBar}>
-          <View style={{ ...commonStyles.rowSpaceBetween, gap: 10 }}>
-            <TouchableOpacity onPress={handleOpenCamera}>
-              <Ionicons name="camera" size={24} color={Colors.primaryColor} />
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={handleOpenGallery}>
-              <Ionicons name="image" size={24} color={Colors.primaryColor} />
-            </TouchableOpacity>
-          </View>
-          <TextInput
-            style={styles.textInput}
-            value={textInput}
-            placeholder="Type a message"
-            onChangeText={setTextInput}
+        <View style={{ flex: 1 }}> 
+          <FlatList
+            data={messages}
+            keyExtractor={(item) => item.id}
+            renderItem={renderMessage}
+            contentContainerStyle={{ padding: 10 }}
+            inverted
+            keyboardShouldPersistTaps="handled"
           />
 
-          <TouchableOpacity onPress={() => sendMessage()}>
-            <Ionicons name="send" size={24} color={Colors.primaryColor} />
-          </TouchableOpacity>
+          <View style={styles.inputBar}>
+            <View style={{ ...commonStyles.rowSpaceBetween, gap: 10 }}>
+              <TouchableOpacity onPress={handleOpenCamera}>
+                <Ionicons name="camera" size={24} color={Colors.primaryColor} />
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={handleOpenGallery}>
+                <Ionicons name="image" size={24} color={Colors.primaryColor} />
+              </TouchableOpacity>
+            </View>
+
+            <TextInput
+              style={styles.textInput}
+              value={textInput}
+              placeholder="Type a message"
+              onChangeText={setTextInput}
+            />
+
+            <TouchableOpacity onPress={sendMessage}>
+              <Ionicons name="send" size={24} color={Colors.primaryColor} />
+            </TouchableOpacity>
+          </View>
         </View>
-      </TouchableOpacity>
-      {fullImageContainer(modalVisible, setModalVisible, selectedImage)}
-    </View>
-  );
+
+        {fullImageContainer(modalVisible, setModalVisible, selectedImage)}
+      </View>
+    </TouchableWithoutFeedback>
+  </KeyboardAvoidingView>
+)
+
+
 };
 
 export default ChatScreen;

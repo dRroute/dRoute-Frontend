@@ -130,6 +130,7 @@ const UserHome = ({ navigation }) => {
     return (
       // <View style={{paddingRight:20,}}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+
         {featuresList.map((feature, index) => (
           <TouchableOpacity
             key={index}
@@ -148,11 +149,7 @@ const UserHome = ({ navigation }) => {
   };
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        translucent
-        backgroundColor="transparent"
-        barStyle="light-content"
-      />
+    
       <View style={styles.upperBg}>
         <Animated.View style={[styles.upper, animatedTopContainerStyle]}>
           <View style={styles.headerContent}>
@@ -161,7 +158,7 @@ const UserHome = ({ navigation }) => {
               <Icon name="notifications" size={24} color={Colors.whiteColor} />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity activeOpacity={0.8} style={styles.searchBox}>
+          <TouchableOpacity onPress={()=>navigation.navigate("SearchJourneyByName")} activeOpacity={0.8} style={styles.searchBox}>
             <MaterialIcons name="search" color={Colors.grayColor} size={24} />
             <Text
               numberOfLines={1}

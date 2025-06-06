@@ -139,7 +139,7 @@ const [feedBack, setFeedBack] = useState("");
               <DetailRow label="Width" value="10 m" />
               <DetailRow label="Length" value="19 m" />
               <DetailRow label="Weight" value="20 Kg" />
-              <DetailRow label="Value" value="200 $" />
+              <DetailRow label="Value" value="200 ₹" />
             </View>
           </View>
 
