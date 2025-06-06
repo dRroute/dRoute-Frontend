@@ -106,6 +106,11 @@ const Profile = ({ navigation }) => {
             iconName: "confirmation-number",
             onPress: () => navigation.navigate("AllSupportTickets"),
           })}
+          {profileOption({
+            option: "Saved Parcel ",
+            iconName: "all-inbox",
+            onPress: () => navigation.navigate("AllSavedParcels"),
+          })}
 
           {logoutInfo()}
         </View>
