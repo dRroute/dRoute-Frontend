@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createSlice } from "@reduxjs/toolkit";
-import { register, signIn,   getUserById } from "../thunk/authThunk";
-import { postCourier } from "../thunk/courierThunk";
+import { register, signIn, getUserById } from "../thunk/authThunk";
+import { getAllCourierByUserId, postCourier } from "../thunk/courierThunk";
 
 const initialState = {
   user: null,
@@ -19,7 +19,7 @@ const authSlice = createSlice({
     logoutUser: () => {
       AsyncStorage.removeItem("user_id");
       console.log("User logged out successfully");
-      return initialState; 
+      return initialState;
     },
     // New reducer to update userCoordinate
     updateUserCoordinate: (state, action) => {
@@ -70,23 +70,35 @@ const authSlice = createSlice({
       })
       .addCase(getUserById.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.message;
+        state.error = action?.payload?.message;
       });
 
-      //  Courier
+    //  Courier
     builder.addCase(postCourier.pending, (state) => {
       state.loading = true;
       state.error = null;
     })
-    .addCase(postCourier.fulfilled, (state, action) => {
-      state.loading = false;
-      console.log("Courier posted successfullyyy", action?.payload?.data);
-      state.couriers.push(action.payload.data); // Assuming payload contains the new courier data
-    })
-    .addCase(postCourier.rejected, (state, action) => {
-      state.loading = false;
-      state.error = action.payload.message;
-    });
+      .addCase(postCourier.fulfilled, (state, action) => {
+        state.loading = false;
+        console.log("Courier posted successfullyyy", action?.payload?.data);
+        state.couriers.push(action?.payload?.data); // Assuming payload contains the new courier data
+      })
+      .addCase(postCourier.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload.message;
+      })
+      .addCase(getAllCourierByUserId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllCourierByUserId.fulfilled, (state, action) => {
+        state.loading = false;
+        state.couriers = action?.payload?.data; // Assuming payload contains the new courier data
+      })
+      .addCase(getAllCourierByUserId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action?.payload?.message;
+      });
   },
 });
 

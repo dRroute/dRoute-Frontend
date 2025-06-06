@@ -1,10 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { filterJourneyByCourierIdAPI, postCourierAPI } from "../../utils/api/courierApi";
+import { filterJourneyByCourierIdAPI, getAllCourierByUserIdAPI, postCourierAPI } from "../../utils/api/courierApi";
 import { handleAxiosError } from "./authThunk";
 
 // Upload Single File Thunk
 export const postCourier = createAsyncThunk(
-  "document/upload",
+  "courier/post",
   async (data, { rejectWithValue }) => {
     try {
       const response = await postCourierAPI(data);
@@ -19,10 +19,26 @@ export const postCourier = createAsyncThunk(
 
 // Upload Single File Thunk
 export const filterJourneyByCourierId = createAsyncThunk(
-  "document/upload",
+  "courier/filterJourneyByCourierId",
   async (data, { rejectWithValue }) => {
     try {
       const response = await filterJourneyByCourierIdAPI(data);
+      return response?.data;
+
+    } catch (error) {
+      console.log("Error in postCourier Thunk:", error);
+      return rejectWithValue(handleAxiosError(error));
+    }
+  }
+);
+
+
+// Get All Courier By UserId
+export const getAllCourierByUserId = createAsyncThunk(
+  "courier/getAllCourierByUserId",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await getAllCourierByUserIdAPI(data);
       return response?.data;
 
     } catch (error) {

@@ -1,26 +1,52 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { Colors, screenWidth } from "../../constants/styles";
 import { commonAppBar } from "../../components/commonComponents";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { FontAwesome } from "@expo/vector-icons";
 import { TicketLoaderCard } from "../../components/ticketCard";
-import { useSelector } from "react-redux";
-import { selectCouriers } from "../../redux/selector/authSelector";
+import { useDispatch, useSelector } from "react-redux";
+import { selectAuthloader, selectCouriers, selectUser } from "../../redux/selector/authSelector";
 import { getDimensionUnitAbbreviation, getWeightUnitAbbreviation } from "../../utils/commonMethods";
+import { getAllCourierByUserId } from "../../redux/thunk/courierThunk";
+import { showSnackbar } from "../../redux/slice/snackbarSlice";
 
 const AllSavedParcels = ({ navigation }) => {
-  const [isLoading, setIsLoading] = useState(false);
-
+  const isLoading = useSelector(selectAuthloader);
+  const user = useSelector(selectUser);
   const rawCouriers = useSelector(selectCouriers);
+  const dispatch = useDispatch();
   console.log("all saved couriers =", rawCouriers);
 
+
   const couriers = Array.isArray(rawCouriers)
-    ? rawCouriers.filter((item) => !Array.isArray(item))
+    ? rawCouriers.filter((item) => item?.status === 'SAVED')
     : [];
 
+  useEffect(() => {
+
+    const fetchSavedCourier = async () => {
+      if (rawCouriers.length === 0) {
+        const response = await dispatch(getAllCourierByUserId(user?.userId));
+        if (getAllCourierByUserId.fulfilled.match(response)) {
+
+          console.log('Saved courier fetched successfully');
+        } else{
+          await dispatch(showSnackbar({
+            message: response?.payload?.message || 'Something went wrong. Please try again after sometime.',
+            type: 'error',
+            time: 3000
+          }));
+          return;
+        }
+      }
+    };
+    fetchSavedCourier();
+   
+  }, []);
+
   const renderItem = ({ item }) => (
-    <TouchableOpacity  activeOpacity={0.8} onPress={()=>navigation.navigate("AllSearchedJourneyList",{courierId:item?.courierId})} style={styles.card}>
+    <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate("AllSearchedJourneyList", { courierId: item?.courierId })} style={styles.card}>
       <View style={styles.row}>
         <Text style={styles.label}>From:</Text>
         <Text style={styles.value}>{item?.courierSourceAddress}</Text>
@@ -54,7 +80,7 @@ const AllSavedParcels = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {commonAppBar("Saved Parcels", navigation)}
+      {commonAppBar(`Saved Parcels ${couriers?.length}`, navigation)}
       {isLoading ? (
         <TicketLoaderCard count={5} />
       ) : (

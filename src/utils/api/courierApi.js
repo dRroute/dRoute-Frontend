@@ -15,11 +15,20 @@ export const postCourierAPI = (data) =>
     accessToken: null,
   });
 
-  //For filtering journeys by courier ID
-export const filterJourneyByCourierIdAPI = (courierId) =>
-  apiGetRequest({
+//For filtering journeys by courier ID
+export const filterJourneyByCourierIdAPI = async(courierId) =>
+  await apiGetRequest({
     apiUrl: `${USER_API_URL}/courier/${courierId}/journeys`,
     content_type: "application/json",
-    data: null, 
+    data: null,
+    accessToken: null,
+  });
+
+//Get All Courier By User Id
+export const getAllCourierByUserIdAPI = async(userId) =>
+  await apiGetRequest({
+    apiUrl: `${USER_API_URL}/${userId}/couriers`,
+    content_type: "application/json",
+    data: null,
     accessToken: null,
   });
