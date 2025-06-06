@@ -302,3 +302,33 @@ export const trimText = (text, maxLength) => {
   if (typeof text !== "string") return "";
   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
 };
+
+
+// Map enum names to abbreviations
+const weightUnitAbbreviations = {
+  GRAMS: "g",
+  KILOGRAMS: "kg",
+  POUNDS: "lb",
+  OUNCES: "oz",
+  MILLIGRAMS: "mg",
+  TONNES: "t",
+};
+
+
+export const getWeightUnitAbbreviation = (enumName) => {
+  return weightUnitAbbreviations[enumName] || enumName;
+};
+
+
+// Map enum names to abbreviations for DimensionUnit
+const dimensionUnitAbbreviations = {
+  CENTIMETERS: "cm",
+  METERS: "m",
+  INCHES: "in",
+  FEET: "ft",
+  MILLIMETERS: "mm",
+};
+
+export const getDimensionUnitAbbreviation = (enumName) => {
+  return dimensionUnitAbbreviations[enumName] || enumName;
+};

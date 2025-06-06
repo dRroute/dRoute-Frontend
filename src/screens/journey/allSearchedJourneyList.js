@@ -17,7 +17,8 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import MyStatusBar from "../../components/myStatusBar";
 import { JourneyCardSkeleton, JourneyCard } from "../../components/userSideJourneyCard";
 import { filterJourneyByCourierId } from "../../redux/thunk/courierThunk";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { selectAuthloader } from "../../redux/selector/authSelector";
 
 const JOURNEYS = [
   {
@@ -65,46 +66,76 @@ const JOURNEYS = [
 ];
 
 const AllSearchedJourneyList = ({ navigation, route }) => {
-  const [isLoading, setIsLoading] = useState(false);
+  const isLoading = useSelector(selectAuthloader);
   const { courierId } = route?.params
   const dispatch = useDispatch();
   const [filteredJourneys, setFilteredJourneys] = useState([]);
 
 
-// Fetch journeys by courier ID when the component mounts
+  // Fetch journeys by courier ID when the component mounts
   // This will only run once when the component is mounted
-useEffect(() => {
-  let isMounted = true; // Prevent state updates if unmounted
+  useEffect(() => {
+    let isMounted = true; // Prevent state updates if unmounted
 
-  const fetchJourneys = async () => {
-    if (filteredJourneys.length === 0) {
-      setIsLoading(true);
-      const response = await dispatch(filterJourneyByCourierId(courierId));
-      if (filterJourneyByCourierId.fulfilled.match(response)) {
-        if (isMounted) setFilteredJourneys(response?.payload?.data);
+    const fetchJourneys = async () => {
+      if (filteredJourneys.length === 0) {
 
-        await dispatch(
-          showSnackbar({
-            message: response?.payload?.message,
-            type: "success",
-            time: 2000,
-          })
-        );
+        const response = await dispatch(filterJourneyByCourierId(courierId));
+        if (filterJourneyByCourierId.fulfilled.match(response)) {
+          if (isMounted) setFilteredJourneys(...filteredJourneys, response?.payload?.data);
+
+          await dispatch(
+            showSnackbar({
+              message: response?.payload?.message,
+              type: "success",
+              time: 2000,
+            })
+          );
+        }
+
       }
-      if (isMounted) setIsLoading(false);
+    };
+    fetchJourneys();
+
+    return () => {
+      isMounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+
+  const handleRefresh = async () => {
+    const response = await dispatch(filterJourneyByCourierId(courierId));
+    if (filterJourneyByCourierId.fulfilled.match(response)) {
+      setFilteredJourneys(response?.payload?.data || []);
+
+      await dispatch(
+        showSnackbar({
+          message: response?.payload?.message || "Journeys refreshed",
+          type: "success",
+          time: 2000,
+        })
+      );
+    } else {
+      await dispatch(
+        showSnackbar({
+          message: response?.payload?.message || "Failed to refresh journeys",
+          type: "error",
+          time: 2000,
+        })
+      );
     }
   };
-  fetchJourneys();
 
-  return () => {
-    isMounted = false;
-  };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
+
+  useEffect(() => {
+    console.log('filtered journey = ', filteredJourneys);
+  }, [filteredJourneys])
+
 
 
   const handleCardClick = (item) => {
-    navigation.navigate("VehicleAndParcelDetail");
+    navigation.navigate("VehicleAndParcelDetail", { item, courierId });
   };
 
   return (

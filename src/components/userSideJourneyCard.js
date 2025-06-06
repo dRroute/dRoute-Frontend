@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from "react";
 import { View, Text, Image, StyleSheet, Animated } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { Colors, commonStyles } from "../constants/styles";
-import { trimText } from "../utils/commonMethods";
+import { getDimensionUnitAbbreviation, getWeightUnitAbbreviation, trimText } from "../utils/commonMethods";
 
 // JourneyCard Component
 export const JourneyCard = ({ data }) => {
@@ -70,13 +70,13 @@ export const JourneyCard = ({ data }) => {
           <View style={styles.capacityBlock}>
             <Text style={styles.capacityText}>
               Weight Capacity :{" "}
-              {`${data?.journey?.availableWeight} ${data?.journey?.availableWeightMeasurementType}`}
+              {`${data?.journey?.availableWeight} ${getWeightUnitAbbreviation(data?.journey?.availableWeightMeasurementType)}`}
             </Text>
           </View>
           <View style={styles.capacityBlock}>
             <Text style={styles.capacityText}>
               Volume Capacity :{" "}
-              {`${data?.journey?.availableLength} x ${data?.journey?.availableWidth} x ${data?.journey?.availableHeight} ${data?.journey?.availableSpaceMeasurementType}`}
+              {`${data?.journey?.availableLength} x ${data?.journey?.availableWidth} x ${data?.journey?.availableHeight} ${getDimensionUnitAbbreviation(data?.journey?.availableSpaceMeasurementType)}`}
             </Text>
           </View>
         </View>
