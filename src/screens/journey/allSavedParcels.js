@@ -1,65 +1,55 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { Colors, screenWidth } from "../../constants/styles";
 import { commonAppBar } from "../../components/commonComponents";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { FontAwesome } from "@expo/vector-icons";
 import { TicketLoaderCard } from "../../components/ticketCard";
-const Parcels = [
-  {
-    id: '1',
-    pickupCity: 'Pune',
-    destinationCity: 'Mumbai',
-    weight: 10,
-    weightUnit: 'kg',
-    length: 20,
-    width: 15,
-    height: 10,
-    lengthUnit: 'cm',
-  },
-  {
-    id: '2',
-    pickupCity: 'Delhi',
-    destinationCity: 'Chandigarh',
-    weight: 5,
-    weightUnit: 'kg',
-    length: 30,
-    width: 20,
-    height: 12,
-    lengthUnit: 'cm',
-  },
-];
-
+import { useSelector } from "react-redux";
+import { selectCouriers } from "../../redux/selector/authSelector";
+import { getDimensionUnitAbbreviation, getWeightUnitAbbreviation } from "../../utils/commonMethods";
 
 const AllSavedParcels = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const rawCouriers = useSelector(selectCouriers);
+  console.log("all saved couriers =", rawCouriers);
+
+  const couriers = Array.isArray(rawCouriers)
+    ? rawCouriers.filter((item) => !Array.isArray(item))
+    : [];
+
   const renderItem = ({ item }) => (
-    <View style={styles.card}>
+    <TouchableOpacity  activeOpacity={0.8} onPress={()=>navigation.navigate("AllSearchedJourneyList",{courierId:item?.courierId})} style={styles.card}>
       <View style={styles.row}>
         <Text style={styles.label}>From:</Text>
-        <Text style={styles.value}>{item.pickupCity}</Text>
+        <Text style={styles.value}>{item?.courierSourceAddress}</Text>
       </View>
 
       <View style={styles.row}>
         <Text style={styles.label}>To:</Text>
-        <Text style={styles.value}>{item.destinationCity}</Text>
+        <Text style={styles.value}>{item?.courierDestinationAddress}</Text>
       </View>
 
       <View style={styles.row}>
         <Text style={styles.label}>Weight:</Text>
         <Text style={styles.value}>
-          {item.weight} {item.weightUnit}
+          {item?.courierWeight}{" "}
+          {getWeightUnitAbbreviation(item?.courierWeightUnit)}
         </Text>
       </View>
 
       <View style={styles.row}>
         <Text style={styles.label}>Dimensions:</Text>
         <Text style={styles.value}>
-          {item.length}×{item.width}×{item.height} {item.lengthUnit}
+          <Text style={styles.value}>
+            {"("}
+            {item?.courierLength}×{item?.courierWidth}×{item?.courierHeight}
+            {")"} {getDimensionUnitAbbreviation(item?.courierDimensionUnit)}³
+          </Text>
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -69,8 +59,8 @@ const AllSavedParcels = ({ navigation }) => {
         <TicketLoaderCard count={5} />
       ) : (
         <FlatList
-          data={Parcels}
-          keyExtractor={(item) => item.id}
+          data={couriers}
+          keyExtractor={(item) => item?.courierId?.toString()}
           renderItem={renderItem}
           contentContainerStyle={{ paddingBottom: 20 }}
           ListEmptyComponent={

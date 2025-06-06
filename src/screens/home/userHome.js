@@ -53,7 +53,7 @@ const JOURNEYS = [
     weightCapacity: "200 kg",
     volumeCapacity: "30 m^3",
   },
-   {
+  {
     id: "2",
     avatar:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
@@ -68,7 +68,7 @@ const JOURNEYS = [
     weightCapacity: "200 kg",
     volumeCapacity: "30 m^3",
   },
-   {
+  {
     id: "3",
     avatar:
       "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
@@ -87,6 +87,16 @@ const JOURNEYS = [
 
 const UserHome = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = () => {
+    console.log("handleRefresh called");
+    setRefreshing(true);
+
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1500);
+  };
 
   const handleCardClick = (item) => {
     navigation.navigate("VehicleDetail");
@@ -112,17 +122,17 @@ const UserHome = ({ navigation }) => {
     {
       title: "Your Orders",
       image: require("../../../assets/images/box.jpg"),
-      onPress: ()=>navigation.navigate("AllOrders"),
+      onPress: () => navigation.navigate("AllOrders"),
     },
     {
       title: "Estimate Price",
       image: require("../../../assets/images/calci.png"),
-       onPress: ()=>navigation.navigate("OrderDetailScreen"),
+      onPress: () => navigation.navigate("OrderDetailScreen"),
     },
     {
       title: "Requested Journey",
       image: require("../../../assets/images/miniTruck.png"),
-      onPress: ()=>navigation.navigate("PendingRequests"),
+      onPress: () => navigation.navigate("PendingRequests"),
     },
   ];
 
@@ -130,7 +140,6 @@ const UserHome = ({ navigation }) => {
     return (
       // <View style={{paddingRight:20,}}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-
         {featuresList.map((feature, index) => (
           <TouchableOpacity
             key={index}
@@ -149,7 +158,6 @@ const UserHome = ({ navigation }) => {
   };
   return (
     <SafeAreaView style={styles.container}>
-    
       <View style={styles.upperBg}>
         <Animated.View style={[styles.upper, animatedTopContainerStyle]}>
           <View style={styles.headerContent}>
@@ -158,7 +166,11 @@ const UserHome = ({ navigation }) => {
               <Icon name="notifications" size={24} color={Colors.whiteColor} />
             </TouchableOpacity>
           </View>
-          <TouchableOpacity onPress={()=>navigation.navigate("SearchJourneyByName")} activeOpacity={0.8} style={styles.searchBox}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("SearchJourneyByName")}
+            activeOpacity={0.8}
+            style={styles.searchBox}
+          >
             <MaterialIcons name="search" color={Colors.grayColor} size={24} />
             <Text
               numberOfLines={1}
@@ -179,6 +191,8 @@ const UserHome = ({ navigation }) => {
           <Animated.ScrollView
             refreshControl={
               <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
                 colors={["#9Bd35A", "#101942"]}
                 tintColor="#101942"
               />
@@ -202,35 +216,48 @@ const UserHome = ({ navigation }) => {
               <Text style={{ fontSize: 14, fontWeight: "700" }}>
                 Nearest Ongoing Vehicles:{" "}
               </Text>
-              <TouchableOpacity onPress={()=>navigation.navigate("AllNearestJourney")}>
-              <Text
-                style={{
-                  fontSize: 14,
-                  fontWeight: "700",
-                  color: Colors.primaryColor,
-                }}
+              <TouchableOpacity
+                onPress={() => navigation.navigate("AllNearestJourney")}
               >
-                See All
-              </Text></TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: "700",
+                    color: Colors.primaryColor,
+                  }}
+                >
+                  See All
+                </Text>
+              </TouchableOpacity>
             </View>
-             {isLoading ? (
-                   <JourneyCardSkeleton count={5} />
-                 ) : (
-                   <View>
-                     {JOURNEYS.length > 0 ? (
-                       JOURNEYS.map((item) => (
-                         <TouchableOpacity activeOpacity={0.8} key={item.id} onPress={() => handleCardClick(item)}>
-                           <JourneyCard data={item} />
-                         </TouchableOpacity>
-                       ))
-                     ) : (
-                       <View style={styles.emptyContainer}>
-                         <Icon name="map-search-outline" size={60} color={Colors.grayColor} />
-                         <Text style={styles.emptyText}>Journey Not found</Text>
-                       </View>
-                     )}
-                   </View>
-                 )}
+            {isLoading ? (
+              <View style={{ paddingTop: 60, marginHorizontal: 10 }}>
+                <JourneyCardSkeleton count={5} />
+              </View>
+            ) : (
+              <View>
+                {JOURNEYS.length > 0 ? (
+                  JOURNEYS.map((item) => (
+                    <TouchableOpacity
+                      activeOpacity={0.8}
+                      key={item.id}
+                      onPress={() => handleCardClick(item)}
+                    >
+                      <JourneyCard data={item} />
+                    </TouchableOpacity>
+                  ))
+                ) : (
+                  <View style={styles.emptyContainer}>
+                    <Icon
+                      name="map-search-outline"
+                      size={60}
+                      color={Colors.grayColor}
+                    />
+                    <Text style={styles.emptyText}>Journey Not found</Text>
+                  </View>
+                )}
+              </View>
+            )}
             {isLoading && (
               <>
                 {JourneyCardSkeleton(1)}
@@ -313,7 +340,8 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     textAlign: "center",
     maxWidth: 60,
-  }, emptyContainer: {
+  },
+  emptyContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",

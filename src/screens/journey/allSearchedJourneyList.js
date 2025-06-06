@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
   SafeAreaView,
 } from "react-native";
 
@@ -67,22 +68,20 @@ const JOURNEYS = [
 
 const AllSearchedJourneyList = ({ navigation, route }) => {
   const isLoading = useSelector(selectAuthloader);
-  const { courierId } = route?.params
+  const { courierId } = route?.params;
   const dispatch = useDispatch();
   const [filteredJourneys, setFilteredJourneys] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-
-  // Fetch journeys by courier ID when the component mounts
-  // This will only run once when the component is mounted
   useEffect(() => {
-    let isMounted = true; // Prevent state updates if unmounted
+    let isMounted = true;
 
     const fetchJourneys = async () => {
       if (filteredJourneys.length === 0) {
-
         const response = await dispatch(filterJourneyByCourierId(courierId));
         if (filterJourneyByCourierId.fulfilled.match(response)) {
-          if (isMounted) setFilteredJourneys(...filteredJourneys, response?.payload?.data);
+          if (isMounted)
+            setFilteredJourneys(response?.payload?.data || []);
 
           await dispatch(
             showSnackbar({
@@ -92,7 +91,6 @@ const AllSearchedJourneyList = ({ navigation, route }) => {
             })
           );
         }
-
       }
     };
     fetchJourneys();
@@ -100,15 +98,15 @@ const AllSearchedJourneyList = ({ navigation, route }) => {
     return () => {
       isMounted = false;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
-  const handleRefresh = async () => {
+ const handleRefresh = async () => {
+  
+  setRefreshing(true);
+  try {
     const response = await dispatch(filterJourneyByCourierId(courierId));
     if (filterJourneyByCourierId.fulfilled.match(response)) {
       setFilteredJourneys(response?.payload?.data || []);
-
       await dispatch(
         showSnackbar({
           message: response?.payload?.message || "Journeys refreshed",
@@ -125,14 +123,15 @@ const AllSearchedJourneyList = ({ navigation, route }) => {
         })
       );
     }
-  };
+  } finally {
+    setRefreshing(false);
+  }
+};
 
 
   useEffect(() => {
-    console.log('filtered journey = ', filteredJourneys);
-  }, [filteredJourneys])
-
-
+    console.log("filtered journey = ", filteredJourneys);
+  }, [filteredJourneys]);
 
   const handleCardClick = (item) => {
     navigation.navigate("VehicleAndParcelDetail", { item, courierId });
@@ -143,25 +142,40 @@ const AllSearchedJourneyList = ({ navigation, route }) => {
       <MyStatusBar />
       {commonAppBar("All Matching Vehicles", navigation)}
 
-      {/* <View style={{ marginTop: 20, marginBottom: 10, ...commonStyles.rowSpaceBetween }}>
-        <Text style={{ fontSize: 14, fontWeight: "700" }}>Nearest Ongoing Vehicles:</Text>
-        <Text style={{ fontSize: 14, fontWeight: "700", color: Colors.primaryColor }}>See All</Text>
-      </View> */}
-
       {isLoading ? (
-        <JourneyCardSkeleton count={5} />
+        <View style={{ paddingTop: 60, marginHorizontal: 10 }}>
+          <JourneyCardSkeleton count={5} />
+        </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={["#9Bd35A", "#101942"]}
+              tintColor="#101942"
+            />
+          }
+        >
           {filteredJourneys.length > 0 ? (
             filteredJourneys.map((item) => (
-              <TouchableOpacity activeOpacity={0.8} key={item.id} onPress={() => handleCardClick(item)}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                key={item.id}
+                onPress={() => handleCardClick(item)}
+              >
                 <JourneyCard data={item} />
               </TouchableOpacity>
             ))
           ) : (
             <View style={styles.emptyContainer}>
-              <Icon name="map-search-outline" size={60} color={Colors.grayColor} />
-              <Text style={styles.emptyText}>Journey Not found</Text>
+              <Icon
+                name="map-search-outline"
+                size={60}
+                color={Colors.grayColor}
+              />
+              <Text style={styles.emptyText}>Matching Journey Not found</Text>
             </View>
           )}
         </ScrollView>

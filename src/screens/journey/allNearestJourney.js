@@ -4,23 +4,25 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  RefreshControl,
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
 
-import {
-  Colors,
-  commonStyles,
-} from "../../constants/styles";
+import { Colors, commonStyles } from "../../constants/styles";
 import { commonAppBar } from "../../components/commonComponents";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import MyStatusBar from "../../components/myStatusBar";
-import { JourneyCardSkeleton, JourneyCard } from "../../components/userSideJourneyCard";
+import {
+  JourneyCardSkeleton,
+  JourneyCard,
+} from "../../components/userSideJourneyCard";
 
 const JOURNEYS = [
   {
     id: "1",
-    avatar: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
+    avatar:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
     driverName: "Driver Name",
     rating: 4.5,
     sourceCity: "Pune",
@@ -32,9 +34,10 @@ const JOURNEYS = [
     weightCapacity: "200 kg",
     volumeCapacity: "30 m^3",
   },
-   {
+  {
     id: "2",
-    avatar: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
+    avatar:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
     driverName: "Driver Name",
     rating: 4.5,
     sourceCity: "Pune",
@@ -46,9 +49,10 @@ const JOURNEYS = [
     weightCapacity: "200 kg",
     volumeCapacity: "30 m^3",
   },
-   {
+  {
     id: "3",
-    avatar: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
+    avatar:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
     driverName: "Driver Name",
     rating: 4.5,
     sourceCity: "Pune",
@@ -64,11 +68,11 @@ const JOURNEYS = [
 
 const AllNearestJourney = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
-
+ const [refreshing, setRefreshing] = useState(false);
   const handleCardClick = (item) => {
     navigation.navigate("VehicleAndParcelDetail");
   };
-
+  const handleRefresh = async () => {};
   return (
     <SafeAreaView style={styles.container}>
       <MyStatusBar />
@@ -80,18 +84,38 @@ const AllNearestJourney = ({ navigation }) => {
       </View> */}
 
       {isLoading ? (
-        <JourneyCardSkeleton count={5} />
+        <View style={{ paddingTop: 60, marginHorizontal: 10 }}>
+          <JourneyCardSkeleton count={5} />
+        </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={["#9Bd35A", "#101942"]}
+              tintColor="#101942"
+            />
+          }
+        >
           {JOURNEYS.length > 0 ? (
             JOURNEYS.map((item) => (
-              <TouchableOpacity activeOpacity={0.8} key={item.id} onPress={() => handleCardClick(item)}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                key={item.id}
+                onPress={() => handleCardClick(item)}
+              >
                 <JourneyCard data={item} />
               </TouchableOpacity>
             ))
           ) : (
             <View style={styles.emptyContainer}>
-              <Icon name="map-search-outline" size={60} color={Colors.grayColor} />
+              <Icon
+                name="map-search-outline"
+                size={60}
+                color={Colors.grayColor}
+              />
               <Text style={styles.emptyText}>Journey Not found</Text>
             </View>
           )}

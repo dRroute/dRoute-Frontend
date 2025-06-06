@@ -76,7 +76,7 @@ export const JourneyCard = ({ data }) => {
           <View style={styles.capacityBlock}>
             <Text style={styles.capacityText}>
               Volume Capacity :{" "}
-              {`${data?.journey?.availableLength} x ${data?.journey?.availableWidth} x ${data?.journey?.availableHeight} ${getDimensionUnitAbbreviation(data?.journey?.availableSpaceMeasurementType)}`}
+              {`${data?.journey?.availableLength} x ${data?.journey?.availableWidth} x ${data?.journey?.availableHeight} ${getDimensionUnitAbbreviation(data?.journey?.availableSpaceMeasurementType)}³`}
             </Text>
           </View>
         </View>

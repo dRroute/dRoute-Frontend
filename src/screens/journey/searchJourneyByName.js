@@ -4,25 +4,27 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  RefreshControl,
   TouchableOpacity,
   SafeAreaView,
   TextInput,
 } from "react-native";
 
-import {
-  Colors,
-  commonStyles,
-} from "../../constants/styles";
+import { Colors, commonStyles } from "../../constants/styles";
 import { commonAppBar } from "../../components/commonComponents";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import MyStatusBar from "../../components/myStatusBar";
-import { JourneyCardSkeleton, JourneyCard } from "../../components/userSideJourneyCard";
+import {
+  JourneyCardSkeleton,
+  JourneyCard,
+} from "../../components/userSideJourneyCard";
 
 const JOURNEYS = [
   {
     id: "1",
-    avatar: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
+    avatar:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
     driverName: "Amit Sharma",
     rating: 4.5,
     sourceCity: "Pune",
@@ -36,7 +38,8 @@ const JOURNEYS = [
   },
   {
     id: "2",
-    avatar: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
+    avatar:
+      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
     driverName: "Rahul Patil",
     rating: 4.2,
     sourceCity: "Delhi",
@@ -53,7 +56,7 @@ const JOURNEYS = [
 const SearchJourneyByName = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
-
+  const [refreshing, setRefreshing] = useState(false);
   const filteredJourneys = JOURNEYS.filter((item) => {
     const text = searchText.toLowerCase();
     return (
@@ -68,7 +71,7 @@ const SearchJourneyByName = ({ navigation }) => {
   const handleCardClick = (item) => {
     navigation.navigate("VehicleAndParcelDetail");
   };
-
+  const handleRefresh = async () => {};
   return (
     <SafeAreaView style={styles.container}>
       <MyStatusBar />
@@ -86,18 +89,38 @@ const SearchJourneyByName = ({ navigation }) => {
       </View>
 
       {isLoading ? (
-        <JourneyCardSkeleton count={5} />
+        <View style={{ paddingTop: 60, marginHorizontal: 10 }}>
+          <JourneyCardSkeleton count={5} />
+        </View>
       ) : (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              colors={["#9Bd35A", "#101942"]}
+              tintColor="#101942"
+            />
+          }
+        >
           {filteredJourneys.length > 0 ? (
             filteredJourneys.map((item) => (
-              <TouchableOpacity activeOpacity={0.8} key={item.id} onPress={() => handleCardClick(item)}>
+              <TouchableOpacity
+                activeOpacity={0.8}
+                key={item.id}
+                onPress={() => handleCardClick(item)}
+              >
                 <JourneyCard data={item} />
               </TouchableOpacity>
             ))
           ) : (
             <View style={styles.emptyContainer}>
-              <Icon name="map-search-outline" size={60} color={Colors.grayColor} />
+              <Icon
+                name="map-search-outline"
+                size={60}
+                color={Colors.grayColor}
+              />
               <Text style={styles.emptyText}>No journeys found</Text>
             </View>
           )}
@@ -118,11 +141,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.whiteColor,
     // ...commonStyles.shadow,
     borderRadius: 8,
-    borderColor:Colors.grayColor,
-    borderWidth:0.5,
+    borderColor: Colors.grayColor,
+    borderWidth: 0.5,
     marginHorizontal: 16,
     marginTop: 20,
-    
+
     paddingHorizontal: 12,
     paddingVertical: 2,
   },
