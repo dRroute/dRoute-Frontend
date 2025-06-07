@@ -19,10 +19,10 @@ export const signIn = createAsyncThunk(
 );
 
 export const getUserById = createAsyncThunk(
-  "auth/getDriverByDriverId",
-  async (driverId, { rejectWithValue }) => {
+  "auth/getUserById",
+  async (userId, { rejectWithValue }) => {
     try {
-      const response = await getUserByIdAPI(driverId);
+      const response = await getUserByIdAPI(userId);
       return response.data;
     } catch (error) {
       console.log("Error in getUserById:", error);

@@ -41,7 +41,7 @@ const SignInScreen = ({ navigation }) => {
     const data = {
       emailOrPhone: emailOrPhone,
       password: password,
-      role: "driver",
+      role: "user",
     };
     const validationError = validateForm(data);
 

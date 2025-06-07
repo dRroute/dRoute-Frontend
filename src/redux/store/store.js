@@ -18,7 +18,7 @@ const loadUserData = async () => {
   try {
     const user_id = await AsyncStorage.getItem("user_id");
     // const accessToken = await AsyncStorage.getItem("accessToken");
-    console.log("Driver Id in store", user_id);
+    console.log("user Id in store", user_id);
     // console.log("Access token in store", accessToken);
     // if (user_id && accessToken) {
     if (user_id) {
