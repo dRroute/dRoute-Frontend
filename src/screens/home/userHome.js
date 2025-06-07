@@ -29,13 +29,13 @@ import {
 } from "@expo/vector-icons";
 
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { trimText } from "../../utils/commonMethods";
+import { fetchAddressComponent, getUserLocation, trimText } from "../../utils/commonMethods";
 import {
   JourneyCard,
   JourneyCardSkeleton,
 } from "../../components/userSideJourneyCard";
 // import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-const avatar = null;
+
 
 const JOURNEYS = [
   {
@@ -86,9 +86,13 @@ const JOURNEYS = [
 ];
 
 const UserHome = ({ navigation }) => {
+   const mapRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-
+  const [state, setState] = useState(null);
+  const [region, setRegion] = useState({});
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [errorMessage, setErrorMsg] = useState(null);
   const handleRefresh = () => {
     console.log("handleRefresh called");
     setRefreshing(true);
@@ -101,6 +105,31 @@ const UserHome = ({ navigation }) => {
   const handleCardClick = (item) => {
     navigation.navigate("VehicleDetail");
   };
+  useEffect(() => {
+    const fetchLocationAndAddress = async () => {
+      try {
+        const { latitude, longitude } = await getUserLocation({
+          setRegion,
+          setCurrentLocation,
+          mapRef,
+          setErrorMsg,
+        });
+        if (latitude && longitude) {
+          const addressData = await fetchAddressComponent(latitude, longitude);
+       
+          if (addressData?.address) {
+            setState(addressData?.state);
+            console.log("state at home page =>",state);
+          }
+        } else {
+          console.warn("Latitude or longitude not available.");
+        }
+      } catch (error) {
+         console.log(":", error);
+      }
+    };
+    fetchLocationAndAddress();
+  }, []);
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const animatedTopContainerStyle = {

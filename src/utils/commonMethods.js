@@ -279,7 +279,7 @@ export const fetchAddressComponent = async (latitude, longitude) => {
       pinCode: pinCode ? pinCode.long_name : "",
       address,
     };
-    console.log("address data is ", addressData);
+    // console.log("address data is ", addressData);
     return addressData;
   } catch (error) {
     console.log("Error fetching address:", error);
