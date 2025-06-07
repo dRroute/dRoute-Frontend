@@ -45,18 +45,18 @@ const VehicleAndParcelDetail = ({ navigation, route }) => {
       offeredFare: offerPrice,
       orderStatus: null,
       paymentRequestDto: null
-
     }
-
+ 
     console.log('Data to be submitted', orderData);
 
     setIsLoading(true);
+    setOfferModalVisible(false);
     try {
       const response = await dispatch(sendOrderRequest(orderData));
 
       if (sendOrderRequest.fulfilled.match(response)) {
         dispatch(showSnackbar({
-          message: response?.payload?.message || 'Request sent to the driver',
+          message: response?.payload?.message ==="Order created successfully"?"Offer Sent Succesfully":"Offer Sent Succesfully" || 'Request sent to the driver',
           type: 'success',
           time: 2000
         }));

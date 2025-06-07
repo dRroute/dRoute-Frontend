@@ -23,191 +23,231 @@ import SwipeableTabs from "../../components/swipeableTabs";
 import { ParcelCard, ParcelLoadingCard } from "../../components/parcelCard";
 import { FlatList, TextInput } from "react-native-gesture-handler";
 import Ionicons from "react-native-vector-icons/Ionicons";
-const RequestDetailScreen = ({ navigation }) => {
+import {
+  getDimensionUnitAbbreviation,
+  getWeightUnitAbbreviation,
+} from "../../utils/commonMethods";
+const RequestDetailScreen = ({ navigation, route }) => {
+  const { requestDetail } = route.params;
   const [isOfferModalVisible, setOfferModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [offerPrice, setOfferPrice] = useState("200");
-  const [isAccepted , setIsAccepted]=useState(false);
+  const [offerPrice, setOfferPrice] = useState(
+    requestDetail?.order?.offeredFare?.toString() || "200"
+  );
+  const [isAccepted, setIsAccepted] = useState(false);
+
   const handleOfferSubmit = () => {};
-
-const handleCheckout =()=>{
-setIsAccepted(true);
-navigation.navigate("AddAddress");
-}
-  
-   const image =null;
-  const VehicleDetailTab = () => {
-    return (
-      <>
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <View style={styles.userContainer}>
-            <View style={styles.userInfo}>
-              {image ? (
-                <Image source={{ uri: image }} style={styles.userImage} />
-              ) : (
-                <View style={styles.userImagePlaceholder}>
-                  <MaterialIcons
-                    name="person"
-                    size={26}
-                    color={Colors.grayColor}
-                  />
-                </View>
-              )}
-              <View style={styles.userDetails}>
-                <Text style={styles.userName}>Alok</Text>
-                <Text style={{ ...Fonts.grayColor12Medium }}>
-                  TATA Mini Truck
-                </Text>
-              </View>
-            </View>
-
-            <TouchableOpacity
-              onPress={() => navigation.navigate("ChatScreen")}
-              style={styles.chatIcon}
-            >
-              <Text style={{ fontSize: 12, fontWeight: "500" }}>⭐4.5</Text>
-              <Text style={{ fontSize: 12, fontWeight: "500" }}>See All</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.locationsContainer}>
-            <LocationItem
-              title="Source Address"
-              address="Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041"
-            />
-            <LocationItem
-              title="Destination Address"
-              address="Vadgaon Bk Pune 411041 411041 Vadgaon Bk Pune 411041"
-            />
-          </View>
-
-          <View style={styles.section}>
-            <View style={styles.divider} />
-            <Text style={styles.sectionTitle}>Vehicle Capacity:</Text>
-            <View style={styles.divider} />
-            <View style={{ marginTop: 8 }}>
-              <DetailRow label="Height" value="20 m" />
-              <DetailRow label="Width" value="10 m" />
-              <DetailRow label="Length" value="19 m" />
-              <DetailRow label="Weight" value="20 Kg" />
-            </View>
-          </View>
-          <View style={styles.section}>
-            <View style={styles.divider} />
-             <View style={{ ...commonStyles.rowSpaceBetween, paddingVertical: 8 }}>
-             <Text style={styles.sectionTitle}>OFFERED AMOUNT : 500 $</Text>
-             <TouchableOpacity  onPress={() => setOfferModalVisible(true)}>
-              <Ionicons name="create-outline" size={30} color="teal" />
-              </TouchableOpacity>
-            </View>
-            <View style={styles.divider} />
-           
-          </View>
-
-          <View style={styles.divider} />
-        </ScrollView>
-      </>
-    );
+  const handleCheckout = () => {
+    setIsAccepted(true);
+    navigation.navigate("AddAddress");
   };
 
-  const closeOfferModal = () => {
-    setOfferModalVisible(false);
-  };
+  const driver = requestDetail?.journeyDetails?.driver;
+  const journey = requestDetail?.journeyDetails?.journey;
+  const courier = requestDetail?.courier;
+  const order = requestDetail?.order;
+  const image = driver?.documents?.find(
+    (doc) => doc.documentName === `${driver?.driverId}_avatar`
+  )?.documentUrl;
 
-  const ParcelDetail = () => {
-    return (
-      <>
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-          <View style={styles.locationsContainer}>
-            <LocationItem
-              title="Pickup Address"
-              address="Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041"
-            />
-            <LocationItem
-              title="Delivery Address"
-              address="Vadgaon Bk Pune 411041 411041 Vadgaon Bk Pune 411041"
-            />
-          </View>
+  const deliveryCharge = order?.estimatedFare || 0;
+  const insurance = Math.round(deliveryCharge * 0.01);
+  const total = deliveryCharge + insurance;
 
-          <View style={styles.section}>
-            <View style={styles.divider} />
-            <Text style={styles.sectionTitle}>Parcel Detail:</Text>
-            <View style={styles.divider} />
-            <View style={{ marginTop: 8 }}>
-              <DetailRow label="Height" value="20 m" />
-              <DetailRow label="Width" value="10 m" />
-              <DetailRow label="Length" value="19 m" />
-              <DetailRow label="Weight" value="20 Kg" />
-              <DetailRow label="Value" value="200 $" />
+  const VehicleDetailTab = () => (
+    <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <View style={styles.userContainer}>
+        <View style={styles.userInfo}>
+          {image ? (
+            <Image source={{ uri: image }} style={styles.userImage} />
+          ) : (
+            <View style={styles.userImagePlaceholder}>
+              <MaterialIcons name="person" size={26} color={Colors.grayColor} />
             </View>
+          )}
+          <View style={styles.userDetails}>
+            <Text style={styles.userName}>{driver?.fullName || "Unknown"}</Text>
+            <Text style={{ ...Fonts.grayColor12Medium }}>
+              {driver?.vehicleType}
+            </Text>
           </View>
-
-          <View style={styles.section}>
-            <View style={styles.divider} />
-            <Text style={styles.sectionTitle}>Expected Charges :</Text>
-            <View style={styles.divider} />
-            <View style={{ marginTop: 8 }}>
-              <DetailRow label="Delivery Charge" value="299 $" />
-              <DetailRow label="Insurance Charge" value="9 $" />
-              <DetailRow label="Total" value="300 $" />
-            </View>
-          </View>
-          <View style={styles.divider} />
-        </ScrollView>
-      </>
-    );
-  };
-
-  const LocationItem = ({ title, address }) => {
-    return (
-      <View style={styles.locationItem}>
-        <View style={styles.locationMarker}>
-          <MaterialIcons name="location-on" size={20} color="teal" />
         </View>
-        <View style={styles.locationInfo}>
-          <Text style={{ ...Fonts.blackColor14Bold, marginBottom: 4 }}>
-            {title}
-          </Text>
-          <Text style={Fonts.grayColor12Medium}>{address}</Text>
-        </View>
-      </View>
-    );
-  };
 
-  const DetailRow = ({ label, value }) => {
-    return (
-      <View style={{ ...commonStyles.rowSpaceBetween, paddingVertical: 8 }}>
-        <Text style={Fonts.blackColor12SemiBold}>{label}:</Text>
-        <Text style={Fonts.blackColor12SemiBold}>{value}</Text>
-      </View>
-    );
-  };
-  const offerOverlay = () => {
-    return (
-      <View style={{ padding: 10 }}>
-        <Text
-          style={{
-            textAlign: "center",
-            fontSize: 14,
-            fontWeight: "700",
-            marginBottom: 10,
-            color: Colors.primaryColor,
-          }}
+        <TouchableOpacity
+          onPress={() => navigation.navigate("ChatScreen")}
+          style={styles.chatIcon}
         >
-          UPDATE OFFERED AMOUNT
-        </Text>
-        <TextInput
-          style={styles.boxInput}
-          placeholder="Amount You are Willing to Pay"
-          placeholderTextColor="gray"
-          value={offerPrice}
-          onChangeText={(text) => {
-            setOfferPrice(text);
-          }}
-          keyboardType="numeric"
+          <Text style={{ fontSize: 12, fontWeight: "500" }}>
+            ⭐{requestDetail?.journeyDetails?.averageDriverRating || 0}
+          </Text>
+          <Text style={{ fontSize: 12, fontWeight: "500" }}>See All</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.locationsContainer}>
+        <LocationItem
+          title="Source Address"
+          address={journey?.journeySource?.address}
+        />
+        <LocationItem
+          title="Destination Address"
+          address={journey?.journeyDestination?.address}
         />
       </View>
-    );
-  };
+
+      <View style={styles.section}>
+        <View style={styles.divider} />
+        <Text style={styles.sectionTitle}>Vehicle Capacity:</Text>
+        <View style={styles.divider} />
+        <View style={{ marginTop: 8 }}>
+          <DetailRow
+            label="Height"
+            value={`${journey?.availableHeight} ${getDimensionUnitAbbreviation(
+              journey?.availableSpaceMeasurementType
+            )}`}
+          />
+          <DetailRow
+            label="Width"
+            value={`${journey?.availableWidth} ${getDimensionUnitAbbreviation(
+              journey?.availableSpaceMeasurementType
+            )}`}
+          />
+          <DetailRow
+            label="Length"
+            value={`${journey?.availableLength} ${getDimensionUnitAbbreviation(
+              journey?.availableSpaceMeasurementType
+            )}`}
+          />
+          <DetailRow
+            label="Weight"
+            value={`${journey?.availableWeight} ${getWeightUnitAbbreviation(
+              journey?.availableWeightMeasurementType
+            )}`}
+          />
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <View style={styles.divider} />
+        <View style={{ ...commonStyles.rowSpaceBetween, paddingVertical: 8 }}>
+          <Text style={styles.sectionTitle}>
+            OFFERED AMOUNT : {order?.offeredFare} $
+          </Text>
+          <TouchableOpacity onPress={() => setOfferModalVisible(true)}>
+            <Ionicons name="create-outline" size={30} color="teal" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.divider} />
+      </View>
+
+      <View style={styles.divider} />
+    </ScrollView>
+  );
+
+  const ParcelDetail = () => (
+    <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <View style={styles.locationsContainer}>
+        <LocationItem
+          title="Pickup Address"
+          address={courier?.courierSourceAddress}
+        />
+        <LocationItem
+          title="Delivery Address"
+          address={courier?.courierDestinationAddress}
+        />
+      </View>
+
+      <View style={styles.section}>
+        <View style={styles.divider} />
+        <Text style={styles.sectionTitle}>Parcel Detail:</Text>
+        <View style={styles.divider} />
+        <View style={{ marginTop: 8 }}>
+          <DetailRow
+            label="Height"
+            value={`${courier?.courierHeight} ${getDimensionUnitAbbreviation(
+              courier?.courierDimensionUnit
+            )}`}
+          />
+          <DetailRow
+            label="Width"
+            value={`${courier?.courierWidth} ${getDimensionUnitAbbreviation(
+              courier?.courierDimensionUnit
+            )}`}
+          />
+          <DetailRow
+            label="Length"
+            value={`${courier?.courierLength} ${getDimensionUnitAbbreviation(
+              courier?.courierDimensionUnit
+            )}`}
+          />
+          <DetailRow
+            label="Weight"
+            value={`${courier?.courierWeight} ${getWeightUnitAbbreviation(
+              courier?.courierWeightUnit
+            )}`}
+          />
+          <DetailRow label="Value" value={`${courier?.courierValue} ₹`} />
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <View style={styles.divider} />
+        <Text style={styles.sectionTitle}>Expected Charges :</Text>
+        <View style={styles.divider} />
+        <View style={{ marginTop: 8 }}>
+          <DetailRow label="Delivery Charge" value={`${deliveryCharge} ₹`} />
+          <DetailRow label="Insurance Charge" value={`${insurance} ₹`} />
+          <DetailRow label="Total" value={`${total} ₹`} />
+        </View>
+      </View>
+      <View style={styles.divider} />
+    </ScrollView>
+  );
+
+  const LocationItem = ({ title, address }) => (
+    <View style={styles.locationItem}>
+      <View style={styles.locationMarker}>
+        <MaterialIcons name="location-on" size={20} color="teal" />
+      </View>
+      <View style={styles.locationInfo}>
+        <Text style={{ ...Fonts.blackColor14Bold, marginBottom: 4 }}>
+          {title}
+        </Text>
+        <Text style={Fonts.grayColor12Medium}>{address}</Text>
+      </View>
+    </View>
+  );
+
+  const DetailRow = ({ label, value }) => (
+    <View style={{ ...commonStyles.rowSpaceBetween, paddingVertical: 8 }}>
+      <Text style={Fonts.blackColor12SemiBold}>{label}:</Text>
+      <Text style={Fonts.blackColor12SemiBold}>{value}</Text>
+    </View>
+  );
+
+  const offerOverlay = () => (
+    <View style={{ padding: 10 }}>
+      <Text
+        style={{
+          textAlign: "center",
+          fontSize: 14,
+          fontWeight: "700",
+          marginBottom: 10,
+          color: Colors.primaryColor,
+        }}
+      >
+        UPDATE OFFERED AMOUNT
+      </Text>
+      <TextInput
+        style={styles.boxInput}
+        placeholder="Amount You are Willing to Pay"
+        placeholderTextColor="gray"
+        value={offerPrice}
+        onChangeText={setOfferPrice}
+        keyboardType="numeric"
+      />
+    </View>
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -228,16 +268,22 @@ navigation.navigate("AddAddress");
         <TouchableOpacity
           activeOpacity={0.7}
           onPress={handleCheckout}
-          style={{ ...commonStyles.button, flex: 1 ,backgroundColor:isAccepted?Colors.primaryColor:Colors.grayColor }}
+          style={{
+            ...commonStyles.button,
+            flex: 1,
+            backgroundColor: isAccepted
+              ? Colors.primaryColor
+              : Colors.grayColor,
+          }}
         >
-          <Text style={commonStyles.buttonText }>Checkout</Text>
+          <Text style={commonStyles.buttonText}>Checkout</Text>
         </TouchableOpacity>
       </View>
       {circularLoader(isLoading)}
       {reUsableOverlayWithButton(
         offerOverlay,
         handleOfferSubmit,
-        closeOfferModal,
+        () => setOfferModalVisible(false),
         isOfferModalVisible,
         setOfferModalVisible
       )}

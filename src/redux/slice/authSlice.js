@@ -1,7 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createSlice } from "@reduxjs/toolkit";
 import { register, signIn, getUserById } from "../thunk/authThunk";
-import { getAllCourierByUserId, postCourier, sendOrderRequest } from "../thunk/courierThunk";
+import {
+  filterJourneyByCourierId,
+  getAllCourierByUserId,
+  postCourier,
+  sendOrderRequest,
+} from "../thunk/courierThunk";
 
 const initialState = {
   user: null,
@@ -75,10 +80,11 @@ const authSlice = createSlice({
       });
 
     //  Courier
-    builder.addCase(postCourier.pending, (state) => {
-      state.loading = true;
-      state.error = null;
-    })
+    builder
+      .addCase(postCourier.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(postCourier.fulfilled, (state, action) => {
         state.loading = false;
         console.log("Courier posted successfullyyy", action?.payload?.data);
@@ -101,19 +107,48 @@ const authSlice = createSlice({
         state.error = action?.payload?.message;
       });
 
-      builder
+    builder
       .addCase(sendOrderRequest.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(sendOrderRequest.fulfilled, (state, action) => {
         state.loading = false;
-        state.orders.push(action?.payload?.data); // Assuming payload contains the new courier data
+        const newOrder = action?.payload?.data;
+
+        const existingIndex = state.orders.findIndex(
+          (order) =>
+            order?.courier?.courierId === newOrder?.courier?.courierId &&
+            order?.journey?.journey?.journeyId ===
+              newOrder?.journey?.journey?.journeyId
+        );
+
+        if (existingIndex !== -1) {
+          // Replace the existing order
+          state.orders[existingIndex] = newOrder;
+        } else {
+          // Add the new unique order
+          state.orders.push(newOrder);
+        }
       })
+
       .addCase(sendOrderRequest.rejected, (state, action) => {
         state.loading = false;
         state.error = action?.payload?.message;
-      }); 
+      });
+    //filterJourneyByCourierId
+    builder
+      .addCase(filterJourneyByCourierId.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(filterJourneyByCourierId.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(filterJourneyByCourierId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action?.payload?.message;
+      });
   },
 });
 

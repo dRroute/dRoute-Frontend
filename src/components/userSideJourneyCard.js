@@ -20,7 +20,7 @@ export const JourneyCard = ({ data }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View key={(Date.now())} style={styles.container}>
       <View style={styles.avatarContainer}>
         {avatar ? (
           <Image source={{ uri: avatar }} style={styles.avatar} />
