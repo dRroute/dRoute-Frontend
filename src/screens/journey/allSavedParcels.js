@@ -1,78 +1,102 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from "react-native";
-import { Colors, screenWidth } from "../../constants/styles";
-import { commonAppBar } from "../../components/commonComponents";
-import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import { FontAwesome } from "@expo/vector-icons";
-import { TicketLoaderCard } from "../../components/ticketCard";
+import { useEffect, useState } from "react";
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { commonAppBar } from "../../components/commonComponents";
+import { TicketLoaderCard } from "../../components/ticketCard";
+import { Colors } from "../../constants/styles";
 import { selectAuthloader, selectCouriers, selectUser } from "../../redux/selector/authSelector";
-import { getDimensionUnitAbbreviation, getWeightUnitAbbreviation } from "../../utils/commonMethods";
-import { getAllCourierByUserId } from "../../redux/thunk/courierThunk";
 import { showSnackbar } from "../../redux/slice/snackbarSlice";
+import { getAllCourierByUserId } from "../../redux/thunk/courierThunk";
+import { getDimensionUnitAbbreviation, getWeightUnitAbbreviation } from "../../utils/commonMethods";
 
 const AllSavedParcels = ({ navigation }) => {
   const isLoading = useSelector(selectAuthloader);
   const user = useSelector(selectUser);
   const rawCouriers = useSelector(selectCouriers);
   const dispatch = useDispatch();
-  console.log("all saved couriers =", rawCouriers);
 
+  const [refreshing, setRefreshing] = useState(false); // for pull-to-refresh
 
   const couriers = Array.isArray(rawCouriers)
     ? rawCouriers.filter((item) => item?.status === 'SAVED')
     : [];
 
   useEffect(() => {
-
     const fetchSavedCourier = async () => {
       if (rawCouriers.length === 0) {
         const response = await dispatch(getAllCourierByUserId(user?.userId));
-        if (getAllCourierByUserId.fulfilled.match(response)) {
-
-          console.log('Saved courier fetched successfully');
-        } else{
-          await dispatch(showSnackbar({
-            message: response?.payload?.message || 'Something went wrong. Please try again after sometime.',
-            type: 'error',
-            time: 3000
-          }));
-          return;
+        if (!getAllCourierByUserId.fulfilled.match(response)) {
+          await dispatch(
+            showSnackbar({
+              message:
+                response?.payload?.message ||
+                'Something went wrong. Please try again later.',
+              type: 'error',
+              time: 3000,
+            })
+          );
         }
       }
     };
     fetchSavedCourier();
-   
   }, []);
 
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    const response = await dispatch(getAllCourierByUserId(user?.userId));
+    if (getAllCourierByUserId.fulfilled.match(response)) {
+      await dispatch(
+        showSnackbar({
+          message: 'Saved couriers refreshed successfully.',
+          type: 'success',
+          time: 2000,
+        })
+      );
+    } else {
+      await dispatch(
+        showSnackbar({
+          message:
+            response?.payload?.message ||
+            'Failed to refresh. Please try again later.',
+          type: 'error',
+          time: 3000,
+        })
+      );
+    }
+    setRefreshing(false);
+  };
+
   const renderItem = ({ item }) => (
-    <TouchableOpacity activeOpacity={0.8} onPress={() => navigation.navigate("AllSearchedJourneyList", { courierId: item?.courierId })} style={styles.card}>
+    <TouchableOpacity
+      activeOpacity={0.8}
+      onPress={() =>
+        navigation.navigate('AllSearchedJourneyList', {
+          courierId: item?.courierId,
+        })
+      }
+      style={styles.card}
+    >
       <View style={styles.row}>
         <Text style={styles.label}>From:</Text>
         <Text style={styles.value}>{item?.courierSourceAddress}</Text>
       </View>
-
       <View style={styles.row}>
         <Text style={styles.label}>To:</Text>
         <Text style={styles.value}>{item?.courierDestinationAddress}</Text>
       </View>
-
       <View style={styles.row}>
         <Text style={styles.label}>Weight:</Text>
         <Text style={styles.value}>
-          {item?.courierWeight}{" "}
+          {item?.courierWeight}{' '}
           {getWeightUnitAbbreviation(item?.courierWeightUnit)}
         </Text>
       </View>
-
       <View style={styles.row}>
         <Text style={styles.label}>Dimensions:</Text>
         <Text style={styles.value}>
-          <Text style={styles.value}>
-            {"("}
-            {item?.courierLength}×{item?.courierWidth}×{item?.courierHeight}
-            {")"} {getDimensionUnitAbbreviation(item?.courierDimensionUnit)}³
-          </Text>
+          ({item?.courierLength}×{item?.courierWidth}×{item?.courierHeight}){' '}
+          {getDimensionUnitAbbreviation(item?.courierDimensionUnit)}³
         </Text>
       </View>
     </TouchableOpacity>
@@ -80,7 +104,7 @@ const AllSavedParcels = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {commonAppBar(`Saved Parcels ${couriers?.length}`, navigation)}
+      {commonAppBar(`Saved Parcels: ${couriers?.length}`, navigation)}
       {isLoading ? (
         <TicketLoaderCard count={5} />
       ) : (
@@ -89,6 +113,8 @@ const AllSavedParcels = ({ navigation }) => {
           keyExtractor={(item) => item?.courierId?.toString()}
           renderItem={renderItem}
           contentContainerStyle={{ paddingBottom: 20 }}
+          onRefresh={handleRefresh}
+          refreshing={refreshing}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <FontAwesome
@@ -104,6 +130,7 @@ const AllSavedParcels = ({ navigation }) => {
     </View>
   );
 };
+
 
 const styles = StyleSheet.create({
   container: {

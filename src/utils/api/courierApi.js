@@ -5,7 +5,7 @@ import { apiPutRequest } from "../http/put";
 import Key from "../../constants/key"; // Import Key object
 
 // Constants
-const { USER_API_URL } = Key;
+const { USER_API_URL, ORDER_API_URL } = Key;
 // API CALLS
 export const postCourierAPI = (data) =>
   apiPostRequest({
@@ -16,8 +16,8 @@ export const postCourierAPI = (data) =>
   });
 
 //For filtering journeys by courier ID
-export const filterJourneyByCourierIdAPI = async(courierId) =>
-  await apiGetRequest({
+export const filterJourneyByCourierIdAPI = (courierId) =>
+   apiGetRequest({
     apiUrl: `${USER_API_URL}/courier/${courierId}/journeys`,
     content_type: "application/json",
     data: null,
@@ -25,10 +25,19 @@ export const filterJourneyByCourierIdAPI = async(courierId) =>
   });
 
 //Get All Courier By User Id
-export const getAllCourierByUserIdAPI = async(userId) =>
-  await apiGetRequest({
+export const getAllCourierByUserIdAPI = (userId) =>
+   apiGetRequest({
     apiUrl: `${USER_API_URL}/${userId}/couriers`,
     content_type: "application/json",
     data: null,
+    accessToken: null,
+  });
+
+//Get All Courier By User Id
+export const sendOrderRequestAPI = (data) =>
+   apiPostRequest({
+    apiUrl: `${ORDER_API_URL}`,
+    content_type: "application/json",
+    data: data,
     accessToken: null,
   });

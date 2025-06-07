@@ -1,11 +1,12 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createSlice } from "@reduxjs/toolkit";
 import { register, signIn, getUserById } from "../thunk/authThunk";
-import { getAllCourierByUserId, postCourier } from "../thunk/courierThunk";
+import { getAllCourierByUserId, postCourier, sendOrderRequest } from "../thunk/courierThunk";
 
 const initialState = {
   user: null,
   couriers: [],
+  orders: [],
   loading: false,
   errorMessage: null,
   //   accessToken: null,
@@ -99,6 +100,20 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action?.payload?.message;
       });
+
+      builder
+      .addCase(sendOrderRequest.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(sendOrderRequest.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders.push(action?.payload?.data); // Assuming payload contains the new courier data
+      })
+      .addCase(sendOrderRequest.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action?.payload?.message;
+      }); 
   },
 });
 

@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { filterJourneyByCourierIdAPI, getAllCourierByUserIdAPI, postCourierAPI } from "../../utils/api/courierApi";
+import { filterJourneyByCourierIdAPI, getAllCourierByUserIdAPI, postCourierAPI, requestOrderForCourierAPI, sendOrderRequestAPI } from "../../utils/api/courierApi";
 import { handleAxiosError } from "./authThunk";
 
 // Upload Single File Thunk
@@ -43,6 +43,21 @@ export const getAllCourierByUserId = createAsyncThunk(
 
     } catch (error) {
       console.log("Error in postCourier Thunk:", error);
+      return rejectWithValue(handleAxiosError(error));
+    }
+  }
+);
+
+// Request order for courier
+export const sendOrderRequest = createAsyncThunk(
+  "courier/sendOrderRequest",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await sendOrderRequestAPI(data);
+      return response?.data;
+
+    } catch (error) {
+      console.log("Error in sendOrderRequest Thunk:", error);
       return rejectWithValue(handleAxiosError(error));
     }
   }

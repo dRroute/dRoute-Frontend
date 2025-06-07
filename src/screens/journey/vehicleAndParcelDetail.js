@@ -1,30 +1,29 @@
-import React, { useRef, useState } from "react";
+import { MaterialIcons } from "@expo/vector-icons";
+import { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   Image,
-  Dimensions,
-  TouchableOpacity,
-  ScrollView,
   SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { TextInput } from "react-native-gesture-handler";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  actionOverlay,
   circularLoader,
   commonAppBar,
-  inputBox,
-  reUsableOverlayWithButton,
+  reUsableOverlayWithButton
 } from "../../components/commonComponents";
 import MyStatusBar from "../../components/myStatusBar";
-import { Colors, commonStyles, Fonts } from "../../constants/styles";
 import SwipeableTabs from "../../components/swipeableTabs";
-import { ParcelCard, ParcelLoadingCard } from "../../components/parcelCard";
-import { FlatList, TextInput } from "react-native-gesture-handler";
-import { useSelector } from "react-redux";
+import { Colors, commonStyles, Fonts } from "../../constants/styles";
 import { selectCouriers } from "../../redux/selector/authSelector";
 import { getDimensionUnitAbbreviation, getWeightUnitAbbreviation } from "../../utils/commonMethods";
+
+import { showSnackbar } from "../../redux/slice/snackbarSlice";
+import { sendOrderRequest } from "../../redux/thunk/courierThunk";
 
 const VehicleAndParcelDetail = ({ navigation, route }) => {
   const [isOfferModalVisible, setOfferModalVisible] = useState(false);
@@ -34,10 +33,56 @@ const VehicleAndParcelDetail = ({ navigation, route }) => {
   const driver = item?.driver;
   const journey = item?.journey
   const courierDetail = useSelector(selectCouriers).find(courier => courier?.courierId === courierId);
+  const dispatch = useDispatch();
 
   console.log('parcel detail = ', courierDetail);
   const image = null;
-  const handleOfferSubmit = () => { };
+  const handleOfferSubmit = async() => { 
+    const orderData = {
+      courierId: courierDetail?.courierId,
+      journeyId: journey?.journeyId,
+      estimatedFare: 299,
+      offeredFare: offerPrice,
+      orderStatus: null,
+      paymentRequestDto: null
+
+    }
+
+    console.log('Data to be submitted', orderData);
+
+    setIsLoading(true);
+    try {
+      const response = await dispatch(sendOrderRequest(orderData));
+
+      if (sendOrderRequest.fulfilled.match(response)) {
+        dispatch(showSnackbar({
+          message: response?.payload?.message || 'Request sent to the driver',
+          type: 'success',
+          time: 2000
+        }));
+
+        
+      } else {
+         dispatch(showSnackbar({
+          message: response?.payload?.message || 'Failed to sent request',
+          type: 'error',
+          time: 3000
+        }));
+        
+      }
+
+    } catch (error) {
+
+      console.log(error);
+       dispatch(showSnackbar({
+          message: error?.message || error?.response?.message || 'Some thing went wrong. Please try after sometime.',
+          type: 'error',
+          time: 3000
+        }));
+    } finally{
+      setIsLoading(false);
+    }
+  };
 
   const VehicleDetailTab = () => {
     const driverAvatarUrl = driver?.documents?.find(
@@ -129,11 +174,11 @@ const VehicleAndParcelDetail = ({ navigation, route }) => {
             <Text style={styles.sectionTitle}>Parcel Detail:</Text>
             <View style={styles.divider} />
             <View style={{ marginTop: 8 }}>
-              <DetailRow label="Height" value="20 m" />
-              <DetailRow label="Width" value="10 m" />
-              <DetailRow label="Length" value="19 m" />
-              <DetailRow label="Weight" value="20 Kg" />
-              <DetailRow label="Value" value="200 $" />
+              <DetailRow label="Height" value= {`${courierDetail?.courierHeight} ${getDimensionUnitAbbreviation(courierDetail?.courierDimensionUnit)}`} />
+              <DetailRow label="Width" value= {`${courierDetail?.courierWidth} ${getDimensionUnitAbbreviation(courierDetail?.courierDimensionUnit)}`} />
+              <DetailRow label="Length" value= {`${courierDetail?.courierLength} ${getDimensionUnitAbbreviation(courierDetail?.courierDimensionUnit)}`} />
+              <DetailRow label="Weight" value= {`${courierDetail?.courierWeight} ${getWeightUnitAbbreviation(courierDetail?.courierWeightUnit)}`} />
+              <DetailRow label="Value" value= {`${courierDetail?.courierHeight} ${getWeightUnitAbbreviation(courierDetail?.courierWeightUnit)}`} />
             </View>
           </View>
 

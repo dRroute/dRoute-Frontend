@@ -1,31 +1,26 @@
-import React, { useRef, useState } from "react";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Overlay } from "@rneui/themed";
+import { useState } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
   Image,
-  Dimensions,
-  TouchableOpacity,
-  ScrollView,
-  SafeAreaView,
   Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View
 } from "react-native";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { TextInput } from "react-native-gesture-handler";
 import {
-  actionOverlay,
   circularLoader,
   commonAppBar,
-  inputBox,
-  reUsableOverlayWithButton,
+  reUsableOverlayWithButton
 } from "../../components/commonComponents";
 import MyStatusBar from "../../components/myStatusBar";
-import { Colors, commonStyles, Fonts, screenWidth, Sizes } from "../../constants/styles";
 import SwipeableTabs from "../../components/swipeableTabs";
-import { ParcelCard, ParcelLoadingCard } from "../../components/parcelCard";
-import { FlatList, TextInput } from "react-native-gesture-handler";
-import Ionicons from "react-native-vector-icons/Ionicons";
 import { Tracking } from "../../components/tracking";
-import { Overlay } from "@rneui/themed";
+import { Colors, commonStyles, Fonts, screenWidth, Sizes } from "../../constants/styles";
 
 const OrderDetailScreen = ({ navigation }) => {
   const [isOfferModalVisible, setOfferModalVisible] = useState(false);
