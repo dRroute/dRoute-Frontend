@@ -74,7 +74,7 @@ function AppNavigator() {
             />
             <Stack.Screen name="ForgetPassword" component={ForgetPassword} />
           </>
-        ) : user ? (
+        ) : user?.profileStatus === 'ACTIVE' ? (
           <>
             <Stack.Screen
               name="BottomNavigationBar"

@@ -1,9 +1,10 @@
 import { apiPostRequest } from "../http/post";
-// import { APP_BACKEND_API } from "@env";
+import { APP_BACKEND_API } from "@env";
 import { apiGetRequest } from "../http/get";
 import { apiPutRequest } from "../http/put";
 import Key from "../../constants/key"; // Import Key object
-
+ 
+console.log("this is env url",APP_BACKEND_API);
 // Constants
 const { USER_API_URL, ORDER_API_URL } = Key;
 // API CALLS

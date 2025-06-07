@@ -57,7 +57,7 @@ const VerificationScreen = ({ navigation, route }) => {
               time: 2000,
             })
           );
-          navigation.navigate("InstructionToComplete");
+          // navigation.navigate("InstructionToComplete");
         } else {
           await dispatch(
             showSnackbar({

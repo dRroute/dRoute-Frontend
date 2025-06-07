@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+
 import {
   View,
   Text,
@@ -191,7 +192,7 @@ return (
   <KeyboardAvoidingView
     behavior={Platform.OS === "ios" ? "padding" : "height"}
     style={{ flex: 1 }}
-    keyboardVerticalOffset={Platform.OS === "ios" ? 80 :40}
+    keyboardVerticalOffset={Platform.OS === "ios" ? 80 :40} 
   >
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <View style={styles.container}>
@@ -205,7 +206,6 @@ return (
               <Text style={styles.userPhone}>+91 567898765</Text>
             </View>
           </View>
-
           {deleteItem ? (
             <TouchableOpacity onPress={() => deleteMessage(deleteItem)}>
               <Ionicons name="trash" size={24} color={Colors.darkOrangeColor} />
@@ -219,46 +219,40 @@ return (
           )}
         </View>
 
-        <View style={{ flex: 1 }}> 
-          <FlatList
-            data={messages}
-            keyExtractor={(item) => item.id}
-            renderItem={renderMessage}
-            contentContainerStyle={{ padding: 10 }}
-            inverted
-            keyboardShouldPersistTaps="handled"
-          />
+        <FlatList
+          data={messages}
+          keyExtractor={(item) => item.id}
+          renderItem={renderMessage}
+          contentContainerStyle={{ padding: 10 }}
+          inverted
+        />
 
-          <View style={styles.inputBar}>
-            <View style={{ ...commonStyles.rowSpaceBetween, gap: 10 }}>
-              <TouchableOpacity onPress={handleOpenCamera}>
-                <Ionicons name="camera" size={24} color={Colors.primaryColor} />
-              </TouchableOpacity>
+        <View style={styles.inputBar}>
+          <View style={{ ...commonStyles.rowSpaceBetween, gap: 10 }}>
+            <TouchableOpacity onPress={handleOpenCamera}>
+              <Ionicons name="camera" size={24} color={Colors.primaryColor} />
+            </TouchableOpacity>
 
-              <TouchableOpacity onPress={handleOpenGallery}>
-                <Ionicons name="image" size={24} color={Colors.primaryColor} />
-              </TouchableOpacity>
-            </View>
-
-            <TextInput
-              style={styles.textInput}
-              value={textInput}
-              placeholder="Type a message"
-              onChangeText={setTextInput}
-            />
-
-            <TouchableOpacity onPress={sendMessage}>
-              <Ionicons name="send" size={24} color={Colors.primaryColor} />
+            <TouchableOpacity onPress={handleOpenGallery}>
+              <Ionicons name="image" size={24} color={Colors.primaryColor} />
             </TouchableOpacity>
           </View>
+          <TextInput
+            style={styles.textInput}
+            value={textInput}
+            placeholder="Type a message"
+            onChangeText={setTextInput}
+          />
+          <TouchableOpacity onPress={() => sendMessage()}>
+            <Ionicons name="send" size={24} color={Colors.primaryColor} />
+          </TouchableOpacity>
         </View>
 
         {fullImageContainer(modalVisible, setModalVisible, selectedImage)}
       </View>
     </TouchableWithoutFeedback>
   </KeyboardAvoidingView>
-)
-
+);
 
 };
 
