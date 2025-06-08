@@ -34,6 +34,10 @@ import {
   JourneyCard,
   JourneyCardSkeleton,
 } from "../../components/userSideJourneyCard";
+import { getUserAllOrders } from "../../redux/thunk/orderThunk";
+import { showSnackbar } from "../../redux/slice/snackbarSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../../redux/selector/authSelector";
 // import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 
@@ -49,6 +53,8 @@ const UserHome = ({ navigation }) => {
   const [region, setRegion] = useState({});
   const [currentLocation, setCurrentLocation] = useState(null);
   const [errorMessage, setErrorMsg] = useState(null);
+  const dispatch = useDispatch();
+  const user=useSelector(selectUser);
   const handleRefresh = () => {
     console.log("handleRefresh called");
     setRefreshing(true);
@@ -75,10 +81,10 @@ const UserHome = ({ navigation }) => {
        
           if (addressData?.address) {
             setState(addressData?.state);
-            console.log("state at home page =>",state);
+            // console.log("state at home page =>",state);
           }
         } else {
-          console.warn("Latitude or longitude not available.");
+          console.log("Latitude or longitude not available.");
         }
       } catch (error) {
          console.log(":", error);
@@ -86,6 +92,42 @@ const UserHome = ({ navigation }) => {
     };
     fetchLocationAndAddress();
   }, []);
+
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+       try {
+        const response = await dispatch(getUserAllOrders(user?.userId));
+        console.log(" All orders at home",response)
+        if (getUserAllOrders.fulfilled && getUserAllOrders.fulfilled.match(response)) {
+          dispatch(
+            showSnackbar({
+              message: response?.payload?.message || "Orders loaded successfully",
+              type: "success",
+              time: 2000,
+            })
+          );
+        } else {
+          dispatch(
+            showSnackbar({
+              message: response?.payload?.message || "Failed to load orders",
+              type: "error",
+              time: 2000,
+            })
+          );
+        }
+      } catch (error) {
+        dispatch(
+          showSnackbar({
+            message: "An error occurred while loading orders",
+            type: "error",
+            time: 2000,
+          })
+        );
+      }
+    };
+    fetchOrders();
+  }, [dispatch]);
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const animatedTopContainerStyle = {
@@ -234,7 +276,7 @@ const UserHome = ({ navigation }) => {
                 ) : (
                   <View style={styles.emptyContainer}>
                     <Icon
-                      name="map-search-outline"
+                      name="location-on"
                       size={60}
                       color={Colors.grayColor}
                     />

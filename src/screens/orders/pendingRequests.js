@@ -27,13 +27,16 @@ const PendingRequests = ({ navigation }) => {
   const isLoading = useSelector(selectAuthloader);
   const couriers = useSelector(selectOrders);
  const [refreshing, setRefreshing] = useState(false);
-  const JOURNEYS = couriers.filter(item => item.order?.orderStatus === "PENDING");
+  
+ console.log("this is couriers ,in pending Screen upperr ",couriers);
+  const JOURNEYS = couriers.filter(item => item.order?.status === "PENDING");
+ console.log("this is couriers ,in pending Screen ",JOURNEYS);
 
   const handleCardClick = (item) => {
-    navigation.navigate("RequestDetailScreen", { requestDetail: item });
+    navigation.navigate("RequestDetailScreen lowerrr", { requestDetail: item });
   };
   const handleRefresh = async () => {};
-  
+
   return (
     <SafeAreaView style={styles.container}>
       <MyStatusBar />
