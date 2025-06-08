@@ -22,16 +22,20 @@ import SwipeableTabs from "../../components/swipeableTabs";
 import { Tracking } from "../../components/tracking";
 import { Colors, commonStyles, Fonts, screenWidth, Sizes } from "../../constants/styles";
 
-const OrderDetailScreen = ({ navigation }) => {
+const OrderDetailScreen = ({ navigation, route }) => {
   const [isOfferModalVisible, setOfferModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [offerPrice, setOfferPrice] = useState("200");
   const [isAccepted, setIsAccepted] = useState(false);
-   const [showRateNowDialog, setshowRateNowDialog] = useState(false);
-     const [rating, setRating] = useState(0);
-const [feedBack, setFeedBack] = useState("");
+  const [showRateNowDialog, setshowRateNowDialog] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [feedBack, setFeedBack] = useState("");
 
-  const handleOfferSubmit = () => {};
+  const {item} = route?.params;
+
+  
+
+  const handleOfferSubmit = () => { };
 
   const handleCheckout = () => {
     setIsAccepted(true);
@@ -97,10 +101,10 @@ const [feedBack, setFeedBack] = useState("");
             <View style={styles.divider} />
           </View>
           {/* <View style={styles.divider} /> */}
-         
-           <Tracking />
 
-          
+          <Tracking />
+
+
         </ScrollView>
       </>
     );
@@ -230,31 +234,31 @@ const [feedBack, setFeedBack] = useState("");
           </Text>
           {ratingInfo()}
           <View
-                  style={{
-                    padding: 5,
-                    margin: 10,
-                    borderWidth: 1,
-                    borderColor: "#ccc",
-                    borderRadius: 4,
-                  }}
-                >
-                  <TextInput
-                    placeholder="Give a Small FeedBack..."
-                    value={feedBack}
-                    onChangeText={(text)=>setFeedBack(text)}
-                    style={{
-                      ...Fonts.blackColor12Medium,
-                      paddingTop: Sizes.fixPadding,
-                      paddingHorizontal: Sizes.fixPadding,
-                      textAlignVertical: "top",
-                      height: 100,
-                    }}
-                    placeholderTextColor={Colors.grayColor}
-                    cursorColor={Colors.primaryColor}
-                    selectionColor={Colors.extraLightGrayColor}
-                    multiline
-                  />
-                </View>
+            style={{
+              padding: 5,
+              margin: 10,
+              borderWidth: 1,
+              borderColor: "#ccc",
+              borderRadius: 4,
+            }}
+          >
+            <TextInput
+              placeholder="Give a Small FeedBack..."
+              value={feedBack}
+              onChangeText={(text) => setFeedBack(text)}
+              style={{
+                ...Fonts.blackColor12Medium,
+                paddingTop: Sizes.fixPadding,
+                paddingHorizontal: Sizes.fixPadding,
+                textAlignVertical: "top",
+                height: 100,
+              }}
+              placeholderTextColor={Colors.grayColor}
+              cursorColor={Colors.primaryColor}
+              selectionColor={Colors.extraLightGrayColor}
+              multiline
+            />
+          </View>
           <View
             style={{
               ...commonStyles.rowAlignCenter,
@@ -293,17 +297,17 @@ const [feedBack, setFeedBack] = useState("");
 
   function ratingInfo() {
     return (
-    <View style={styles.ratingWrapStyle}>
-  {[1, 2, 3, 4, 5].map((star) => (
-    <MaterialIcons
-      key={star}
-      name={rating >= star ? "star" : "star-border"}
-      size={screenWidth / 12.5}
-      color={Colors.primaryColor}
-      onPress={() => setRating(star)}
-    />
-  ))}
-</View>
+      <View style={styles.ratingWrapStyle}>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <MaterialIcons
+            key={star}
+            name={rating >= star ? "star" : "star-border"}
+            size={screenWidth / 12.5}
+            color={Colors.primaryColor}
+            onPress={() => setRating(star)}
+          />
+        ))}
+      </View>
 
     );
   }
@@ -311,16 +315,16 @@ const [feedBack, setFeedBack] = useState("");
     <SafeAreaView style={styles.container}>
       <MyStatusBar />
       {commonAppBar("Order Detail", navigation)}
-      
+
       <SwipeableTabs
         titles={["Vehicle Detail", "Parcel & Payment Detail"]}
         components={[<VehicleDetailTab />, <ParcelDetail />]}
       />
-        
+
       <View style={styles.bottomButtons}>
         <TouchableOpacity
           activeOpacity={0.6}
-          onPress={() =>setshowRateNowDialog(true)}
+          onPress={() => setshowRateNowDialog(true)}
           style={{ ...commonStyles.outlinedButton, flex: 1 }}
         >
           <Text style={commonStyles.outlinedButtonText}>Rate Order</Text>
@@ -449,7 +453,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingVertical: 60,
   },
- // rating
+  // rating
   dialogStyle: {
     backgroundColor: Colors.whiteColor,
     borderRadius: Sizes.fixPadding - 5.0,

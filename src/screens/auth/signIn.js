@@ -70,6 +70,14 @@ const SignInScreen = ({ navigation }) => {
             time: 5000,
           })
         );
+      } else{
+         await dispatch(
+          showSnackbar({
+            message: response?.payload?.message,
+            type: "error",
+            time: 5000,
+          })
+        );
       }
     } catch (e) {
       await dispatch(

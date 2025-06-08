@@ -7,6 +7,7 @@ import {
   postCourier,
   sendOrderRequest,
 } from "../thunk/courierThunk";
+import { getUserAllOrders } from "../thunk/orderThunk";
 
 const initialState = {
   user: null,
@@ -133,6 +134,21 @@ const authSlice = createSlice({
       })
 
       .addCase(sendOrderRequest.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action?.payload?.message;
+      })
+
+      //Get all orders
+      .addCase(getUserAllOrders.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getUserAllOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.orders = action?.payload?.data;
+      })
+
+      .addCase(getUserAllOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action?.payload?.message;
       });

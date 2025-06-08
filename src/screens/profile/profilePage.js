@@ -18,11 +18,12 @@ import {
 } from "../../constants/styles";
 import MyStatusBar from "../../components/myStatusBar";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-
+import { useDispatch, useSelector } from "react-redux";
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { fullImageContainer } from "../../components/commonComponents";
 import { showFullImageFunction } from "../../utils/commonMethods";
 import { logoutUser } from "../../redux/slice/authSlice";
+import { selectUser } from "../../redux/selector/authSelector";
 
 const image = "https://cdn.pixabay.com/photo/2024/05/26/10/15/bird-8788491_1280.jpg";
 const Profile = ({ navigation }) => {
@@ -30,8 +31,8 @@ const Profile = ({ navigation }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [showLogoutSheet, setshowLogoutSheet] = useState(false);
   const [avatar, setAvatar] = useState(image);
+  const user = useSelector(selectUser);
   const dispatch = useDispatch();
-
 
   return (
     <View style={{ flex: 1, backgroundColor: Colors.bodyBackColor }}>
@@ -76,8 +77,8 @@ const Profile = ({ navigation }) => {
             marginBottom: Sizes.fixPadding,
           }}
         >
-          <Text style={{ ...Fonts.blackColor18SemiBold }}>Alok Singh</Text>
-          <Text style={{ ...Fonts.grayColor16Medium }}>+91 985678876</Text>
+          <Text style={{ ...Fonts.blackColor18SemiBold }}>{user?.fullName}</Text>
+          <Text style={{ ...Fonts.grayColor16Medium }}>+91 {user?.contactNo}</Text>
         </View>
         <View>
           {profileOption({

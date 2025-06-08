@@ -16,6 +16,8 @@ import { Colors } from "../../constants/styles";
 import MyStatusBar from "../../components/myStatusBar";
 import { commonAppBar } from "../../components/commonComponents";
 import { ParcelCard, ParcelLoadingCard } from "../../components/parcelCard";
+import { useSelector } from "react-redux";
+import { selectAcceptedOrders } from "../../redux/selector/authSelector";
 
 const PACKAGES = [
 {
@@ -59,10 +61,11 @@ const PACKAGES = [
 const AllOrders = ({ navigation }) => {
 
   const [isLoading,setIsLoading]=useState(false);
+  const orders = useSelector(selectAcceptedOrders);
 
   const renderPackageCard = ({ item }) =>
 (
-  <TouchableOpacity activeOpacity={0.8} onPress={()=>navigation.navigate("OrderDetailScreen")} > 
+  <TouchableOpacity activeOpacity={0.8} onPress={()=>navigation.navigate("OrderDetailScreen", {item})} > 
   <ParcelCard  parcelItem={item} />
   </TouchableOpacity>
 );
@@ -73,9 +76,9 @@ const AllOrders = ({ navigation }) => {
       {commonAppBar("All Orders", navigation)}
       {isLoading?(<ParcelLoadingCard count={3} />):(
       <FlatList
-        data={PACKAGES}
+        data={orders}
         renderItem={renderPackageCard}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item?.order?.id}
         contentContainerStyle={styles.listContainer}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={

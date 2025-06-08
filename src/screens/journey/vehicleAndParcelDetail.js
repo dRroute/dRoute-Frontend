@@ -19,7 +19,7 @@ import {
 import MyStatusBar from "../../components/myStatusBar";
 import SwipeableTabs from "../../components/swipeableTabs";
 import { Colors, commonStyles, Fonts } from "../../constants/styles";
-import { selectCouriers } from "../../redux/selector/authSelector";
+import { selectCouriers, selectUser } from "../../redux/selector/authSelector";
 import { getDimensionUnitAbbreviation, getWeightUnitAbbreviation } from "../../utils/commonMethods";
 
 import { showSnackbar } from "../../redux/slice/snackbarSlice";
@@ -32,6 +32,7 @@ const VehicleAndParcelDetail = ({ navigation, route }) => {
   const { item, courierId } = route?.params;
   const driver = item?.driver;
   const journey = item?.journey
+  const user = useSelector(selectUser);
   const courierDetail = useSelector(selectCouriers).find(courier => courier?.courierId === courierId);
   const dispatch = useDispatch();
 
@@ -44,6 +45,8 @@ const VehicleAndParcelDetail = ({ navigation, route }) => {
       estimatedFare: 299,
       offeredFare: offerPrice,
       orderStatus: null,
+      userId: user?.userId,
+      driverId: driver?.driverId,
       paymentRequestDto: null
     }
  
