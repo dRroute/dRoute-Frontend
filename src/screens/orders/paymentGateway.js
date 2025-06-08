@@ -14,6 +14,9 @@ import {
 import { MaterialIcons, FontAwesome5 } from "@expo/vector-icons";
 import LottieView from "lottie-react-native";
 import { Colors } from "../../constants/styles";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../../redux/selector/authSelector";
+import { showSnackbar } from "../../redux/slice/snackbarSlice";
 
 // Define colors at the top for easy customization
 const COLORS = {
@@ -33,28 +36,55 @@ const COLORS = {
 
 const { width, height } = Dimensions.get("window");
 
-const PaymentGatewayScreen = ({ navigation }) => {
+const PaymentGatewayScreen = ({ navigation, route }) => {
+  const { data } = route?.params;
   const [showModal, setShowModal] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState(null); // 'success' or 'failure'
   const [isProcessing, setIsProcessing] = useState(false);
-
+  const user = useSelector(selectUserectUser);
+  const dispatch = useDispatch();
+  console.log("data at payment screen=>", data);
   // Payment data
   const paymentData = {
-    amount: "₹500.00",
-    orderId: "ORD123456789",
-    customerEmail: "customer@example.com",
+    amount: data?.offeredFare,
+    orderId: data?.courierId,
+    customerEmail: user?.email,
   };
 
-  const handlePayment = (status) => {
-    setIsProcessing(true);
-
-    // Simulate payment processing
+ const handlePayment = (status) => {
+  setIsProcessing(true);
+  
+  try {
+    if (status === "success") {
+      // Call API here if payment is successful
+      setTimeout(() => {
+        setIsProcessing(false);
+        setPaymentStatus("success");
+        setShowModal(true);
+      }, 2000);
+    } else {
+      // If status is not "success", treat it as failure
+      setTimeout(() => {
+        setIsProcessing(false);
+        setPaymentStatus("failure");
+        setShowModal(true);
+      }, 2000);
+    }
+  } catch (error) {
+    dispatch(
+      showSnackbar({
+        message: error?.message || "Something went wrong",
+        type: "error",
+        time: 3000,
+      })
+    );
     setTimeout(() => {
       setIsProcessing(false);
-      setPaymentStatus(status);
+      setPaymentStatus("failure");
       setShowModal(true);
     }, 2000);
-  };
+  }
+};
 
   const closeModal = () => {
     setShowModal(false);
@@ -128,7 +158,11 @@ const PaymentGatewayScreen = ({ navigation }) => {
                 <TouchableOpacity
                   style={[
                     styles.modalButton,
-                    { backgroundColor: Colors.primaryColor, flex: 1, marginLeft: 8 },
+                    {
+                      backgroundColor: Colors.primaryColor,
+                      flex: 1,
+                      marginLeft: 8,
+                    },
                   ]}
                   onPress={() => {
                     closeModal();
@@ -228,7 +262,11 @@ const PaymentGatewayScreen = ({ navigation }) => {
 
         <View style={styles.paymentMethodsList}>
           <View style={styles.paymentMethod}>
-            <FontAwesome5 name="credit-card" size={20} color={Colors.primaryColor} />
+            <FontAwesome5
+              name="credit-card"
+              size={20}
+              color={Colors.primaryColor}
+            />
             <Text style={styles.paymentMethodText}>Credit/Debit Card</Text>
             <MaterialIcons
               name="radio-button-checked"

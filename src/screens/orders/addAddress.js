@@ -36,6 +36,7 @@ import {
   DL_REGEX,
   IFSC_REGEX,
   NAME_REGEX,
+  PHONE_REGEX,
   UPI_REGEX,
   VEHICLE_NUMBER_REGEX,
 } from "../../constants/regex";
@@ -43,7 +44,8 @@ import { completeProfile } from "../../redux/thunk/authThunk";
 import { showSnackbar } from "../../redux/slice/snackbarSlice";
 import RazorpayCheckout from "react-native-razorpay";
 import { LottieSuccess } from "../../components/lottieLoader/loaderView";
-const AddAddress = () => {
+const AddAddress = ({ navigation, route }) => {
+  const { dataToNavigate } = route?.params;
   const [imageloading, setImageLoading] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -51,7 +53,6 @@ const AddAddress = () => {
   const [isBottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [currentImageSetter, setCurrentImageSetter] = useState(null);
   const [currentImageLabel, setCurrentImageLabel] = useState(null);
-  const navigation = useNavigation();
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const [senderAddress, setSenderAddress] = useState(null);
@@ -60,44 +61,48 @@ const AddAddress = () => {
   const [senderName, setSenderName] = useState(null);
   const [recieverName, setRecieverName] = useState(null);
   const [senderNumber, setSenderNumber] = useState(null);
-  const [parcelImageURI, setParcelImageURI] = useState(null);
+  const [parcelImageURI, setParcelImageURI] = useState("anjsjwd");
+  // console.log("data at add address page==>", dataToNavigate);
+
+ const validateForm = (data) => {
+  const { senderName, recieverName, senderContactNo, recieverContactNo } = data;
+
+  if (!senderName || !recieverName || !senderContactNo || !recieverContactNo) {
+    return "Please fill in all required fields: Sender & Receiver Name and Contact Numbers.";
+  }
 
 
+  if (!PHONE_REGEX.test(senderContactNo)) {
+    return "Please enter a valid sender contact number.";
+  }
 
-  const payNow = () => {
-    var options = {
-      description: "dRoute Payment",
-      image: "https://images.unsplash.com/photo-1743930285940-4ffe9e29007c?q=80&w=2089&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-      currency: "INR",
-      key: "rzp_test_mRycTme6Oywrj1", // Replace with your Razorpay API key
-      amount: "500", // amount in paise (5000 = Rs 50)
-      name: "dRoute",
-      prefill: {
-        email: "thealoksinghh@gmail.com",
-        contact: "9708571269",
-        name: "Alok singh",
-      },
-      theme: { color: "#083c5d" },
+  if (!PHONE_REGEX.test(recieverContactNo)) {
+    return "Please enter a valid receiver contact number.";
+  }
+    if (!NAME_REGEX.test(recieverName)) {
+    return "Please enter a valid receiver Name.";
+  }
+    if (!NAME_REGEX.test(senderName)) {
+    return "Please enter a valid Sender Name.";
+  }
+
+  return null; 
+};
+
+
+  const handlePayNow = async () => {
+    const data = {
+      ...dataToNavigate,
+      senderName,
+      recieverName,
+      senderContactNo: senderNumber,
+      recieverContactNo: recieverNumber,
+      senderLandmarkAddress: senderAddress,
+      recieverLandmarkAddress: recieverAddress,
+      courierImageUrl1: parcelImageURI,
     };
 
-    RazorpayCheckout.open(options)
-      .then((data) => {
-        // handle success
-        Alert.alert(`Success: ${data.razorpay_payment_id}`);
-      })
-      .catch((error) => {
-        // handle failure
-        Alert.alert(`Error =>: ${error.code} | ${error.description}`);
-      });
-  };
-  const validateForm = () => {
-    return null;
-  };
-
-  const handleSubmit = async () => {
-    const data = {};
-
-    const error = validateForm();
+    const error = validateForm(data);
     if (error) {
       dispatch(
         showSnackbar({
@@ -111,25 +116,7 @@ const AddAddress = () => {
 
     setIsLoading(true);
     try {
-      const response = await dispatch(completeProfile(data));
-      if (completeProfile.fulfilled.match(response)) {
-        dispatch(
-          showSnackbar({
-            message: response?.payload?.message,
-            type: "success",
-            time: 3000,
-          })
-        );
-        // Optionally navigate or reset form here
-      } else {
-        dispatch(
-          showSnackbar({
-            message: response?.payload?.message,
-            type: "error",
-            time: 3000,
-          })
-        );
-      }
+      navigation.navigate("PaymentGatewayScreen",{data})
     } catch (err) {
       dispatch(
         showSnackbar({
@@ -148,7 +135,7 @@ const AddAddress = () => {
       <MyStatusBar />
 
       {commonAppBar("Add Address", navigation)}
-      
+
       <ScrollView contentContainerStyle={styles.container}>
         {inputBox?.(
           senderName,
@@ -169,10 +156,10 @@ const AddAddress = () => {
           senderAddress,
           setSenderAddress,
           "Flat no./Building/Street/Landmark/Locality",
-          "Address",
+          "Sender Landmark",
           false
         )}
-        
+
         {inputBox?.(
           recieverName,
           setRecieverName,
@@ -193,14 +180,14 @@ const AddAddress = () => {
           recieverAddress,
           setRecieverAddress,
           "Flat no./Building/Street/Landmark/Locality",
-          "Address",
+          "Reciever Landmark",
           false
         )}
 
         {imageSection?.()}
         <TouchableOpacity
           style={{ ...commonStyles.button, marginBottom: 50 }}
-          onPress={()=>navigation.navigate("PaymentGatewayScreen")}
+          onPress={handlePayNow}
         >
           <Text style={{ ...commonStyles.buttonText }}>Pay Now</Text>
         </TouchableOpacity>
@@ -215,7 +202,7 @@ const AddAddress = () => {
           dispatch={dispatch}
         />
       </ScrollView>
-      
+
       {circularLoader(isLoading)}
     </View>
   );

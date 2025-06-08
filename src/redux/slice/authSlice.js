@@ -116,12 +116,13 @@ const authSlice = createSlice({
       .addCase(sendOrderRequest.fulfilled, (state, action) => {
         state.loading = false;
         const newOrder = action?.payload?.data;
-         console.log("this is new order in slice",newOrder)
+        console.log("this is new order in slice", newOrder);
+
         const existingIndex = state.orders.findIndex(
           (order) =>
             order?.courier?.courierId === newOrder?.courier?.courierId &&
             order?.journeyDetails?.journey?.journeyId ===
-              newOrder?.journey?.journeyDetails?.journeyId
+              newOrder?.journeyDetails?.journey?.journeyId
         );
 
         if (existingIndex !== -1) {

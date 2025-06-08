@@ -27,20 +27,22 @@ import {
   getDimensionUnitAbbreviation,
   getWeightUnitAbbreviation,
 } from "../../utils/commonMethods";
+import { sendOrderRequest } from "../../redux/thunk/courierThunk";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectAuthloader,
+  selectUser,
+} from "../../redux/selector/authSelector";
+import { showSnackbar } from "../../redux/slice/snackbarSlice";
 const RequestDetailScreen = ({ navigation, route }) => {
   const { requestDetail } = route.params;
   const [isOfferModalVisible, setOfferModalVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [estimatedFare, setEstimatedFare] = useState(
+    requestDetail?.order?.estimatedFare
+  );
   const [offerPrice, setOfferPrice] = useState(
     requestDetail?.order?.offeredFare?.toString() || "200"
   );
-  const [isAccepted, setIsAccepted] = useState(false);
-
-  const handleOfferSubmit = () => {};
-  const handleCheckout = () => {
-    setIsAccepted(true);
-    navigation.navigate("AddAddress");
-  };
 
   const driver = requestDetail?.journeyDetails?.driver;
   const journey = requestDetail?.journeyDetails?.journey;
@@ -49,6 +51,96 @@ const RequestDetailScreen = ({ navigation, route }) => {
   const image = driver?.documents?.find(
     (doc) => doc.documentName === `${driver?.driverId}_avatar`
   )?.documentUrl;
+  const isLoading = useSelector(selectAuthloader);
+  // const [isAccepted, setIsAccepted] = useState(
+  //   requestDetail?.order?.status === "ACCEPTED"
+  // );
+ const [isAccepted, setIsAccepted] = useState(
+   true
+  );
+
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
+
+  const handleOfferSubmit = async () => {
+    if (!journey || !courier) {
+      dispatch(
+        showSnackbar({
+          message: "Missing courier or journey details.",
+          type: "error",
+          time: 3000,
+        })
+      );
+      return;
+    }
+
+    const orderData = {
+      courierId: courier?.courierId,
+      journeyId: journey?.journeyId,
+      estimatedFare: estimatedFare,
+      offeredFare: parseFloat(offerPrice),
+      orderStatus: null,
+      userId: user?.userId,
+      driverId: driver?.driverId,
+      paymentRequestDto: null,
+    };
+
+    // console.log("Data to be submitted", orderData);
+    setOfferModalVisible(false);
+    try {
+      const response = await dispatch(sendOrderRequest(orderData));
+
+      if (sendOrderRequest.fulfilled.match(response)) {
+        dispatch(
+          showSnackbar({
+            message:
+              response?.payload?.message === "Order created successfully"
+                ? "Offer Sent Successfully"
+                : "Request sent to the driver",
+            type: "success",
+            time: 2000,
+          })
+        );
+
+        setIsAccepted(true);
+      } else {
+        dispatch(
+          showSnackbar({
+            message: response?.payload?.message || "Failed to send request",
+            type: "error",
+            time: 3000,
+          })
+        );
+      }
+    } catch (error) {
+      console.log("Offer Submit Error:", error);
+      dispatch(
+        showSnackbar({
+          message:
+            error?.message ||
+            error?.response?.message ||
+            "Something went wrong. Please try again later.",
+          type: "error",
+          time: 3000,
+        })
+      );
+    }
+  };
+
+
+
+   const dataToNavigate ={
+    courierId:courier?.courierId,
+    journeyId:journey?.journeyId,
+    userId:user?.userId,
+    driverId:driver.driverId,
+    offeredFare:offerPrice,
+   }
+  const handleCheckout = () => {
+  
+  navigation.navigate("AddAddress",{dataToNavigate});
+  
+  };
 
   const deliveryCharge = order?.estimatedFare || 0;
   const insurance = Math.round(deliveryCharge * 0.01);
@@ -131,7 +223,7 @@ const RequestDetailScreen = ({ navigation, route }) => {
         <View style={styles.divider} />
         <View style={{ ...commonStyles.rowSpaceBetween, paddingVertical: 8 }}>
           <Text style={styles.sectionTitle}>
-            OFFERED AMOUNT : {order?.offeredFare} $
+            OFFERED AMOUNT : ₹ {order?.offeredFare}
           </Text>
           <TouchableOpacity onPress={() => setOfferModalVisible(true)}>
             <Ionicons name="create-outline" size={30} color="teal" />
@@ -195,7 +287,7 @@ const RequestDetailScreen = ({ navigation, route }) => {
         <Text style={styles.sectionTitle}>Expected Charges :</Text>
         <View style={styles.divider} />
         <View style={{ marginTop: 8 }}>
-          <DetailRow label="Delivery Charge" value={`${deliveryCharge} ₹`} />
+          <DetailRow label="Delivery Charge" value={`${estimatedFare} ₹`} />
           <DetailRow label="Insurance Charge" value={`${insurance} ₹`} />
           <DetailRow label="Total" value={`${total} ₹`} />
         </View>
@@ -267,13 +359,14 @@ const RequestDetailScreen = ({ navigation, route }) => {
         </TouchableOpacity>
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={handleCheckout}
+          onPress={isAccepted ? handleCheckout : null}
+          disabled={!isAccepted}
           style={{
             ...commonStyles.button,
             flex: 1,
             backgroundColor: isAccepted
               ? Colors.primaryColor
-              : Colors.grayColor,
+              : Colors.grayColor + "99", 
           }}
         >
           <Text style={commonStyles.buttonText}>Checkout</Text>

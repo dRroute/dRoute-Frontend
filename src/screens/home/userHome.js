@@ -151,11 +151,7 @@ const UserHome = ({ navigation }) => {
       image: require("../../../assets/images/box.jpg"),
       onPress: () => navigation.navigate("AllOrders"),
     },
-    {
-      title: "Estimate Price",
-      image: require("../../../assets/images/calci.png"),
-      onPress: () => navigation.navigate("OrderDetailScreen"),
-    },
+  
     {
       title: "Requested Journey",
       image: require("../../../assets/images/miniTruck.png"),
