@@ -8,6 +8,7 @@ import {
   sendOrderRequest,
 } from "../thunk/courierThunk";
 import { getUserAllOrders } from "../thunk/orderThunk";
+import { getAllJourney } from "../thunk/journeyThunk";
 
 const initialState = {
   user: null,
@@ -163,6 +164,19 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(filterJourneyByCourierId.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action?.payload?.message;
+      });
+      //get all journey
+    builder
+      .addCase(getAllJourney.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getAllJourney.fulfilled, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(getAllJourney.rejected, (state, action) => {
         state.loading = false;
         state.error = action?.payload?.message;
       });

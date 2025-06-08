@@ -20,44 +20,13 @@ import {
   JourneyCard,
 } from "../../components/userSideJourneyCard";
 
-const JOURNEYS = [
-  {
-    id: "1",
-    avatar:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
-    driverName: "Amit Sharma",
-    rating: 4.5,
-    sourceCity: "Pune",
-    sourceTime: "12/08/25 3:00PM",
-    sourceAddress: "123 MG Road, Pune, Maharashtra 411045",
-    destinationCity: "Mumbai",
-    destinationTime: "12/08/25 8:00PM",
-    destinationAddress: "456 Marine Drive, Mumbai, Maharashtra, 411041",
-    weightCapacity: "200 kg",
-    volumeCapacity: "30 m^3",
-  },
-  {
-    id: "2",
-    avatar:
-      "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/User_icon_2.svg/800px-User_icon_2.svg.png",
-    driverName: "Rahul Patil",
-    rating: 4.2,
-    sourceCity: "Delhi",
-    sourceTime: "14/08/25 9:00AM",
-    sourceAddress: "Sector 21, Dwarka, Delhi",
-    destinationCity: "Noida",
-    destinationTime: "14/08/25 12:00PM",
-    destinationAddress: "GIP Mall, Noida",
-    weightCapacity: "150 kg",
-    volumeCapacity: "20 m^3",
-  },
-];
 
-const SearchJourneyByName = ({ navigation }) => {
+const SearchJourneyByName = ({ navigation,route }) => {
+  const {journeys}=route?.params;
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [refreshing, setRefreshing] = useState(false);
-  const filteredJourneys = JOURNEYS.filter((item) => {
+  const filteredJourneys = journeys?.filter((item) => {
     const text = searchText.toLowerCase();
     return (
       item.driverName.toLowerCase().includes(text) ||

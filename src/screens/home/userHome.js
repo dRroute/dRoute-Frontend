@@ -38,6 +38,7 @@ import { getUserAllOrders } from "../../redux/thunk/orderThunk";
 import { showSnackbar } from "../../redux/slice/snackbarSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../redux/selector/authSelector";
+import { getAllJourney } from "../../redux/thunk/journeyThunk";
 // import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 
@@ -51,6 +52,7 @@ const UserHome = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [state, setState] = useState(null);
   const [region, setRegion] = useState({});
+  const [journeys,setJourneys] =useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [errorMessage, setErrorMsg] = useState(null);
   const dispatch = useDispatch();
@@ -98,7 +100,7 @@ const UserHome = ({ navigation }) => {
     const fetchOrders = async () => {
        try {
         const response = await dispatch(getUserAllOrders(user?.userId));
-        console.log(" All orders at home",response)
+        // console.log(" All orders at home",response)
         if (getUserAllOrders.fulfilled && getUserAllOrders.fulfilled.match(response)) {
           dispatch(
             showSnackbar({
@@ -108,13 +110,7 @@ const UserHome = ({ navigation }) => {
             })
           );
         } else {
-          dispatch(
-            showSnackbar({
-              message: response?.payload?.message || "Failed to load orders",
-              type: "error",
-              time: 2000,
-            })
-          );
+          console.log("orders not found",response?.payload?.message)
         }
       } catch (error) {
         dispatch(
@@ -127,7 +123,47 @@ const UserHome = ({ navigation }) => {
       }
     };
     fetchOrders();
-  }, [dispatch]);
+  }, []);
+
+
+ useEffect(() => {
+    const fetchjourney = async () => {
+       try {
+        const response = await dispatch(getAllJourney());
+        console.log("All journey at home",response);
+        setJourneys(response?.payload?.data)
+        if (getAllJourney.fulfilled && getAllJourney.fulfilled.match(response)) {
+          dispatch(
+            showSnackbar({
+              message: response?.payload?.message || "journey loaded successfully",
+              type: "success",
+              time: 2000,
+            })
+          );
+        } else {
+          dispatch(
+            showSnackbar({
+              message: response?.payload?.message || "Failed to load journeys",
+              type: "error",
+              time: 2000,
+            })
+          );
+        }
+      } catch (error) {
+        dispatch(
+          showSnackbar({
+            message: "An error occurred while loading journeys",
+            type: "error",
+            time: 2000,
+          })
+        );
+      }
+    };
+    fetchjourney();
+  }, []);
+
+
+
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const animatedTopContainerStyle = {
@@ -190,7 +226,7 @@ const UserHome = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate("SearchJourneyByName")}
+            onPress={() => navigation.navigate("SearchJourneyByName",{journeys})}
             activeOpacity={0.8}
             style={styles.searchBox}
           >
@@ -259,8 +295,8 @@ const UserHome = ({ navigation }) => {
               </View>
             ) : (
               <View>
-                {JOURNEYS.length > 0 ? (
-                  JOURNEYS.map((item) => (
+                {journeys?.length > 0 ? (
+                  journeys.map((item) => (
                     <TouchableOpacity
                       activeOpacity={0.8}
                       key={item.id}

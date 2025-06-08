@@ -11,3 +11,9 @@ export const getAllNearestJourneyAPI = (userId) =>
     data: null,
     accessToken: null,
   });
+
+export const getAllJourneyAPI = () =>
+  apiGetRequest({
+    apiUrl: `${DRIVER_API_URL}/journey-details`,
+    content_type: "application/json",
+  });
