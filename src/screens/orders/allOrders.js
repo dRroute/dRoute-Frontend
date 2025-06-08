@@ -17,7 +17,7 @@ import MyStatusBar from "../../components/myStatusBar";
 import { commonAppBar } from "../../components/commonComponents";
 import { ParcelCard, ParcelLoadingCard } from "../../components/parcelCard";
 import { useSelector } from "react-redux";
-import { selectAcceptedOrders } from "../../redux/selector/authSelector";
+import { selectAcceptedOrders, selectOrders } from "../../redux/selector/authSelector";
 
 const PACKAGES = [
 {
@@ -61,7 +61,10 @@ const PACKAGES = [
 const AllOrders = ({ navigation }) => {
 
   const [isLoading,setIsLoading]=useState(false);
-  const orders = useSelector(selectAcceptedOrders);
+  const orders = useSelector(selectOrders);
+  const acceptedOrders = orders.filter(
+  (data) => data?.order?.orderStatus === "ACCEPTED"
+);
 
   const renderPackageCard = ({ item }) =>
 (

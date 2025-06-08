@@ -74,7 +74,7 @@ export const ParcelCard = ({ parcelItem }) => {
             color={Colors.whiteColor}
             style={styles.phoneIcon}
           />
-          <Text style={styles.callButtonText}>{parcelItem?.journeyDetails?.driver?.contactNo?.phone}</Text>
+          <Text style={styles.callButtonText}>{parcelItem?.journeyDetails?.driver?.contactNo}</Text>
         </TouchableOpacity>
 
         <View>

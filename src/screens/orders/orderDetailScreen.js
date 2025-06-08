@@ -21,6 +21,7 @@ import MyStatusBar from "../../components/myStatusBar";
 import SwipeableTabs from "../../components/swipeableTabs";
 import { Tracking } from "../../components/tracking";
 import { Colors, commonStyles, Fonts, screenWidth, Sizes } from "../../constants/styles";
+import { getDimensionUnitAbbreviation } from "../../utils/commonMethods";
 
 const OrderDetailScreen = ({ navigation, route }) => {
   const [isOfferModalVisible, setOfferModalVisible] = useState(false);
@@ -61,9 +62,9 @@ const OrderDetailScreen = ({ navigation, route }) => {
                 </View>
               )}
               <View style={styles.userDetails}>
-                <Text style={styles.userName}>Alok</Text>
+                <Text style={styles.userName}>{item?.journeyDetails?.driver?.fullName}</Text>
                 <Text style={{ ...Fonts.grayColor12Medium }}>
-                  TATA Mini Truck
+                  {item?.journeyDetails?.driver?.vehicleName}
                 </Text>
               </View>
             </View>
@@ -78,11 +79,11 @@ const OrderDetailScreen = ({ navigation, route }) => {
           <View style={styles.locationsContainer}>
             <LocationItem
               title="Source Address"
-              address="Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041"
+              address= {item?.journeyDetails?.journey?.journeySource?.address}
             />
             <LocationItem
               title="Destination Address"
-              address="Vadgaon Bk Pune 411041 411041 Vadgaon Bk Pune 411041"
+              address= {item?.journeyDetails?.journey?.journeyDestination?.address}
             />
           </View>
 
@@ -91,7 +92,7 @@ const OrderDetailScreen = ({ navigation, route }) => {
             <Text style={styles.sectionTitle}>Vehicle Capacity:</Text>
             <View style={styles.divider} />
             <View style={{ marginTop: 8 }}>
-              <DetailRow label="Height" value="20 m" />
+              <DetailRow label="Height" value= {`${item?.journeyDetails?.journey?.availableHeight} ${getDimensionUnitAbbreviation(item?.journeyDetails?.journey?.availableSpaceMeasurementType)}`} />
               <DetailRow label="Width" value="10 m" />
               <DetailRow label="Length" value="19 m" />
               <DetailRow label="Weight" value="20 Kg" />

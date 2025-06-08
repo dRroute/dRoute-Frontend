@@ -33,7 +33,7 @@ const PendingRequests = ({ navigation }) => {
  console.log("this is couriers ,in pending Screen ",JOURNEYS);
 
   const handleCardClick = (item) => {
-    navigation.navigate("RequestDetailScreen lowerrr", { requestDetail: item });
+    navigation.navigate("RequestDetailScreen", { requestDetail: item });
   };
   const handleRefresh = async () => {};
 
