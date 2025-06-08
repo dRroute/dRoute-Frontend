@@ -43,20 +43,20 @@ import { getAllJourney } from "../../redux/thunk/journeyThunk";
 
 
 const JOURNEYS = [
-  
+
 ];
 
 const UserHome = ({ navigation }) => {
-   const mapRef = useRef(null);
+  const mapRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [state, setState] = useState(null);
   const [region, setRegion] = useState({});
-  const [journeys,setJourneys] =useState(null);
+  const [journeys, setJourneys] = useState([]);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [errorMessage, setErrorMsg] = useState(null);
   const dispatch = useDispatch();
-  const user=useSelector(selectUser);
+  const user = useSelector(selectUser);
   const handleRefresh = () => {
     console.log("handleRefresh called");
     setRefreshing(true);
@@ -69,71 +69,71 @@ const UserHome = ({ navigation }) => {
   const handleCardClick = (item) => {
     navigation.navigate("VehicleDetail");
   };
-  useEffect(() => {
-    const fetchLocationAndAddress = async () => {
-      try {
-        const { latitude, longitude } = await getUserLocation({
-          setRegion,
-          setCurrentLocation,
-          mapRef,
-          setErrorMsg,
-        });
-        if (latitude && longitude) {
-          const addressData = await fetchAddressComponent(latitude, longitude);
-       
-          if (addressData?.address) {
-            setState(addressData?.state);
-            // console.log("state at home page =>",state);
-          }
-        } else {
-          console.log("Latitude or longitude not available.");
-        }
-      } catch (error) {
-         console.log(":", error);
-      }
-    };
-    fetchLocationAndAddress();
-  }, []);
+  // useEffect(() => {
+  //   const fetchLocationAndAddress = async () => {
+  //     try {
+  //       const { latitude, longitude } = await getUserLocation({
+  //         setRegion,
+  //         setCurrentLocation,
+  //         mapRef,
+  //         setErrorMsg,
+  //       });
+  //       if (latitude && longitude) {
+  //         const addressData = await fetchAddressComponent(latitude, longitude);
+
+  //         if (addressData?.address) {
+  //           setState(addressData?.state);
+  //           // console.log("state at home page =>",state);
+  //         }
+  //       } else {
+  //         console.log("Latitude or longitude not available.");
+  //       }
+  //     } catch (error) {
+  //        console.log(":", error);
+  //     }
+  //   };
+  //   fetchLocationAndAddress();
+  // }, []);
+
+
+  // useEffect(() => {
+  //   const fetchOrders = async () => {
+  //      try {
+  //       const response = await dispatch(getUserAllOrders(user?.userId));
+  //       // console.log(" All orders at home",response)
+  //       if (getUserAllOrders.fulfilled && getUserAllOrders.fulfilled.match(response)) {
+  //         dispatch(
+  //           showSnackbar({
+  //             message: response?.payload?.message || "Orders loaded successfully",
+  //             type: "success",
+  //             time: 2000,
+  //           })
+  //         );
+  //       } else {
+  //         console.log("orders not found",response?.payload?.message)
+  //       }
+  //     } catch (error) {
+  //       dispatch(
+  //         showSnackbar({
+  //           message: "An error occurred while loading orders",
+  //           type: "error",
+  //           time: 2000,
+  //         })
+  //       );
+  //     }
+  //   };
+  //   fetchOrders();
+  // }, []);
 
 
   useEffect(() => {
-    const fetchOrders = async () => {
-       try {
-        const response = await dispatch(getUserAllOrders(user?.userId));
-        // console.log(" All orders at home",response)
-        if (getUserAllOrders.fulfilled && getUserAllOrders.fulfilled.match(response)) {
-          dispatch(
-            showSnackbar({
-              message: response?.payload?.message || "Orders loaded successfully",
-              type: "success",
-              time: 2000,
-            })
-          );
-        } else {
-          console.log("orders not found",response?.payload?.message)
-        }
-      } catch (error) {
-        dispatch(
-          showSnackbar({
-            message: "An error occurred while loading orders",
-            type: "error",
-            time: 2000,
-          })
-        );
-      }
-    };
-    fetchOrders();
-  }, []);
-
-
- useEffect(() => {
     const fetchjourney = async () => {
-       try {
+      try {
         const response = await dispatch(getAllJourney());
-        console.log("All journey at home",response);
-        setJourneys(response?.payload?.data)
-        if (getAllJourney.fulfilled && getAllJourney.fulfilled.match(response)) {
-          dispatch(
+        console.log("All journey at home", response?.payload?.data);
+        setJourneys(...journeys, response?.payload?.data);
+        if (getAllJourney.fulfilled.match(response)) {
+          await dispatch(
             showSnackbar({
               message: response?.payload?.message || "journey loaded successfully",
               type: "success",
@@ -141,7 +141,7 @@ const UserHome = ({ navigation }) => {
             })
           );
         } else {
-          dispatch(
+          await dispatch(
             showSnackbar({
               message: response?.payload?.message || "Failed to load journeys",
               type: "error",
@@ -150,7 +150,7 @@ const UserHome = ({ navigation }) => {
           );
         }
       } catch (error) {
-        dispatch(
+        await dispatch(
           showSnackbar({
             message: "An error occurred while loading journeys",
             type: "error",
@@ -187,7 +187,7 @@ const UserHome = ({ navigation }) => {
       image: require("../../../assets/images/box.jpg"),
       onPress: () => navigation.navigate("AllOrders"),
     },
-  
+
     {
       title: "Requested Journey",
       image: require("../../../assets/images/miniTruck.png"),
@@ -226,7 +226,7 @@ const UserHome = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           <TouchableOpacity
-            onPress={() => navigation.navigate("SearchJourneyByName",{journeys})}
+            onPress={() => navigation.navigate("SearchJourneyByName", { journeys })}
             activeOpacity={0.8}
             style={styles.searchBox}
           >

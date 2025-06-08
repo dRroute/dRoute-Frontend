@@ -6,6 +6,8 @@ import { getDimensionUnitAbbreviation, getWeightUnitAbbreviation, trimText } fro
 
 // JourneyCard Component
 export const JourneyCard = ({ data }) => {
+
+  console.log('data in journey card = ', data);
   const avatar = data?.driver?.documents?.find(
     (doc) => doc.documentName === `${data?.driver?.driverId}_avatar`
   )?.documentUrl;

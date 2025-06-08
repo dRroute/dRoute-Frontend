@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { getUserOrdersAPI } from "../../utils/api/orderApi";
 import { handleAxiosError } from "./authThunk";
+import { getAllJourneyAPI } from "../../utils/api/journeyApi";
 
 
 // Get All Courier By UserId
@@ -20,7 +20,7 @@ export const getAllNearestJourney = createAsyncThunk(
 
 export const getAllJourney = createAsyncThunk(
   "journey/getUserAllJourney",
-  async ( { rejectWithValue }) => {
+  async ( _ , { rejectWithValue }) => {
     try {
       const response = await getAllJourneyAPI();
       return response?.data;
