@@ -9,19 +9,28 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import {
   circularLoader,
   commonAppBar,
-  reUsableOverlayWithButton
+  reUsableOverlayWithButton,
 } from "../../components/commonComponents";
 import MyStatusBar from "../../components/myStatusBar";
 import SwipeableTabs from "../../components/swipeableTabs";
 import { Tracking } from "../../components/tracking";
-import { Colors, commonStyles, Fonts, screenWidth, Sizes } from "../../constants/styles";
-import { getDimensionUnitAbbreviation } from "../../utils/commonMethods";
+import {
+  Colors,
+  commonStyles,
+  Fonts,
+  screenWidth,
+  Sizes,
+} from "../../constants/styles";
+import {
+  getDimensionUnitAbbreviation,
+  getWeightUnitAbbreviation,
+} from "../../utils/commonMethods";
 
 const OrderDetailScreen = ({ navigation, route }) => {
   const [isOfferModalVisible, setOfferModalVisible] = useState(false);
@@ -32,11 +41,9 @@ const OrderDetailScreen = ({ navigation, route }) => {
   const [rating, setRating] = useState(0);
   const [feedBack, setFeedBack] = useState("");
 
-  const {item} = route?.params;
+  const { item } = route?.params;
 
-  
-
-  const handleOfferSubmit = () => { };
+  const handleOfferSubmit = () => {};
 
   const handleCheckout = () => {
     setIsAccepted(true);
@@ -62,7 +69,9 @@ const OrderDetailScreen = ({ navigation, route }) => {
                 </View>
               )}
               <View style={styles.userDetails}>
-                <Text style={styles.userName}>{item?.journeyDetails?.driver?.fullName}</Text>
+                <Text style={styles.userName}>
+                  {item?.journeyDetails?.driver?.fullName}
+                </Text>
                 <Text style={{ ...Fonts.grayColor12Medium }}>
                   {item?.journeyDetails?.driver?.vehicleName}
                 </Text>
@@ -79,11 +88,13 @@ const OrderDetailScreen = ({ navigation, route }) => {
           <View style={styles.locationsContainer}>
             <LocationItem
               title="Source Address"
-              address= {item?.journeyDetails?.journey?.journeySource?.address}
+              address={item?.journeyDetails?.journey?.journeySource?.address}
             />
             <LocationItem
               title="Destination Address"
-              address= {item?.journeyDetails?.journey?.journeyDestination?.address}
+              address={
+                item?.journeyDetails?.journey?.journeyDestination?.address
+              }
             />
           </View>
 
@@ -92,20 +103,52 @@ const OrderDetailScreen = ({ navigation, route }) => {
             <Text style={styles.sectionTitle}>Vehicle Capacity:</Text>
             <View style={styles.divider} />
             <View style={{ marginTop: 8 }}>
-              <DetailRow label="Height" value= {`${item?.journeyDetails?.journey?.availableHeight} ${getDimensionUnitAbbreviation(item?.journeyDetails?.journey?.availableSpaceMeasurementType)}`} />
-              <DetailRow label="Width" value="10 m" />
-              <DetailRow label="Length" value="19 m" />
-              <DetailRow label="Weight" value="20 Kg" />
+              {[
+                {
+                  label: "Height",
+                  value: item?.journeyDetails?.journey?.availableHeight,
+                  unit: getDimensionUnitAbbreviation(
+                    item?.journeyDetails?.journey?.availableSpaceMeasurementType
+                  ),
+                },
+                {
+                  label: "Width",
+                  value: item?.journeyDetails?.journey?.availableWidth,
+                  unit: getDimensionUnitAbbreviation(
+                    item?.journeyDetails?.journey?.availableSpaceMeasurementType
+                  ),
+                },
+                {
+                  label: "Length",
+                  value: item?.journeyDetails?.journey?.availableLength,
+                  unit: getDimensionUnitAbbreviation(
+                    item?.journeyDetails?.journey?.availableSpaceMeasurementType
+                  ),
+                },
+                {
+                  label: "Weight",
+                  value: item?.journeyDetails?.journey?.availableWeight,
+                  unit: getWeightUnitAbbreviation(
+                    item?.journeyDetails?.journey
+                      ?.availableWeightMeasurementType
+                  ),
+                },
+              ].map((detail, index) => (
+                <DetailRow
+                  key={index}
+                  label={detail.label}
+                  value={`${detail.value} ${detail.unit}`}
+                />
+              ))}
             </View>
+
             <View style={styles.divider} />
             <Text style={styles.sectionTitle}>Progress</Text>
             <View style={styles.divider} />
           </View>
           {/* <View style={styles.divider} /> */}
 
-          <Tracking />
-
-
+          <Tracking item={item} />
         </ScrollView>
       </>
     );
@@ -122,11 +165,11 @@ const OrderDetailScreen = ({ navigation, route }) => {
           <View style={styles.locationsContainer}>
             <LocationItem
               title="Pickup Address"
-              address="Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041"
+              address={item?.courier?.courierSourceAddress}
             />
             <LocationItem
               title="Delivery Address"
-              address="Vadgaon Bk Pune 411041 411041 Vadgaon Bk Pune 411041"
+              address={item?.courier?.courierDestinationAddress}
             />
           </View>
 
@@ -135,11 +178,42 @@ const OrderDetailScreen = ({ navigation, route }) => {
             <Text style={styles.sectionTitle}>Parcel Detail:</Text>
             <View style={styles.divider} />
             <View style={{ marginTop: 8 }}>
-              <DetailRow label="Height" value="20 m" />
-              <DetailRow label="Width" value="10 m" />
-              <DetailRow label="Length" value="19 m" />
-              <DetailRow label="Weight" value="20 Kg" />
-              <DetailRow label="Value" value="200 ₹" />
+              <DetailRow
+                label="Height"
+                value={`${
+                  item?.courier?.courierHeight
+                } ${getDimensionUnitAbbreviation(
+                  item?.courier?.courierDimensionUnit
+                )}`}
+              />
+              <DetailRow
+                label="Width"
+                value={`${
+                  item?.courier?.courierWidth
+                } ${getDimensionUnitAbbreviation(
+                  item?.courier?.courierDimensionUnit
+                )}`}
+              />
+              <DetailRow
+                label="Length"
+                value={`${
+                  item?.courier?.courierLength
+                } ${getDimensionUnitAbbreviation(
+                  item?.courier?.courierDimensionUnit
+                )}`}
+              />
+              <DetailRow
+                label="Weight"
+                value={`${
+                  item?.courier?.courierWeight
+                } ${getWeightUnitAbbreviation(
+                  item?.courier?.courierWeightUnit
+                )}`}
+              />
+              <DetailRow
+                label="Value"
+                value={`${item?.courier?.courierValue} ₹`}
+              />
             </View>
           </View>
 
@@ -148,11 +222,10 @@ const OrderDetailScreen = ({ navigation, route }) => {
             <Text style={styles.sectionTitle}>Payment Detail :</Text>
             <View style={styles.divider} />
             <View style={{ marginTop: 8 }}>
-              <DetailRow label="Delivery Charge" value="299 $" />
-              <DetailRow label="Insurance Charge" value="9 $" />
-              <DetailRow label="GST" value="2 $" />
-              <DetailRow label="Platform & Handeling Charge" value="19 $" />
-              <DetailRow label="Total" value="343 $" />
+              <DetailRow label="Delivery Charge" value= {`${item?.order?.payment?.amount || "NA"} ₹`} />
+              <DetailRow label="Payment Status" value= {`${item?.order?.payment?.status || "NA"} ₹`} />
+              <DetailRow label="Payment Method"value= {`${item?.order?.payment?.paymentMethod || "NA"} ₹`} />
+              <DetailRow label="Transaction Id" value= {`${item?.order?.payment?.transactionId || "NA"} ₹`} />
             </View>
           </View>
           <View style={styles.divider} />
@@ -309,7 +382,6 @@ const OrderDetailScreen = ({ navigation, route }) => {
           />
         ))}
       </View>
-
     );
   }
   return (
@@ -343,7 +415,6 @@ const OrderDetailScreen = ({ navigation, route }) => {
         >
           <Text style={commonStyles.buttonText}>Cancel Order</Text>
         </TouchableOpacity>
-
       </View>
       {rateNowDialog()}
       {circularLoader(isLoading)}
