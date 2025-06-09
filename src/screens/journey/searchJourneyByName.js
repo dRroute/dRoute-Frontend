@@ -20,25 +20,26 @@ import {
   JourneyCard,
 } from "../../components/userSideJourneyCard";
 
-
-const SearchJourneyByName = ({ navigation,route }) => {
-  const {journeys}=route?.params;
+const SearchJourneyByName = ({ navigation, route }) => {
+  const { journeys } = route?.params;
   const [isLoading, setIsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [refreshing, setRefreshing] = useState(false);
-  const filteredJourneys = journeys?.filter((item) => {
-    const text = searchText.toLowerCase();
-    return (
-      item.driverName.toLowerCase().includes(text) ||
-      item.sourceCity.toLowerCase().includes(text) ||
-      item.destinationCity.toLowerCase().includes(text) ||
-      item.sourceAddress.toLowerCase().includes(text) ||
-      item.destinationAddress.toLowerCase().includes(text)
-    );
-  });
+  const filteredJourneys = searchText
+    ? journeys?.filter((item) => {
+        const text = searchText.toLowerCase();
+        return (
+          item?.driver?.fullName?.toLowerCase().includes(text) ||
+          item?.journey?.journeySource?.address?.toLowerCase().includes(text) ||
+          item?.journey?.journeyDestination?.address
+            ?.toLowerCase()
+            .includes(text)
+        );
+      })
+    : journeys;
 
   const handleCardClick = (item) => {
-    navigation.navigate("VehicleAndParcelDetail");
+    navigation.navigate("VehicleDetail",{item});
   };
   const handleRefresh = async () => {};
   return (
@@ -77,7 +78,7 @@ const SearchJourneyByName = ({ navigation,route }) => {
             filteredJourneys.map((item) => (
               <TouchableOpacity
                 activeOpacity={0.8}
-                key={item.id}
+                key={item?.journey?.journeyId}
                 onPress={() => handleCardClick(item)}
               >
                 <JourneyCard data={item} />

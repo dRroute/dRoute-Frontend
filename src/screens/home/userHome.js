@@ -67,63 +67,63 @@ const UserHome = ({ navigation }) => {
   };
 
   const handleCardClick = (item) => {
-    navigation.navigate("VehicleDetail");
+    navigation.navigate("VehicleDetail",{item});
   };
-  // useEffect(() => {
-  //   const fetchLocationAndAddress = async () => {
-  //     try {
-  //       const { latitude, longitude } = await getUserLocation({
-  //         setRegion,
-  //         setCurrentLocation,
-  //         mapRef,
-  //         setErrorMsg,
-  //       });
-  //       if (latitude && longitude) {
-  //         const addressData = await fetchAddressComponent(latitude, longitude);
+useEffect(() => {
+    const fetchLocationAndAddress = async () => {
+      try {
+        const { latitude, longitude } = await getUserLocation({
+          setRegion,
+          setCurrentLocation,
+          mapRef,
+          setErrorMsg,
+        });
+        if (latitude && longitude) {
+          const addressData = await fetchAddressComponent(latitude, longitude);
 
-  //         if (addressData?.address) {
-  //           setState(addressData?.state);
-  //           // console.log("state at home page =>",state);
-  //         }
-  //       } else {
-  //         console.log("Latitude or longitude not available.");
-  //       }
-  //     } catch (error) {
-  //        console.log(":", error);
-  //     }
-  //   };
-  //   fetchLocationAndAddress();
-  // }, []);
+          if (addressData?.address) {
+            setState(addressData?.state);
+            // console.log("state at home page =>",state);
+          }
+        } else {
+          console.log("Latitude or longitude not available.");
+        }
+      } catch (error) {
+         console.log(":", error);
+      }
+    };
+    fetchLocationAndAddress();
+  }, []);
 
 
-  // useEffect(() => {
-  //   const fetchOrders = async () => {
-  //      try {
-  //       const response = await dispatch(getUserAllOrders(user?.userId));
-  //       // console.log(" All orders at home",response)
-  //       if (getUserAllOrders.fulfilled && getUserAllOrders.fulfilled.match(response)) {
-  //         dispatch(
-  //           showSnackbar({
-  //             message: response?.payload?.message || "Orders loaded successfully",
-  //             type: "success",
-  //             time: 2000,
-  //           })
-  //         );
-  //       } else {
-  //         console.log("orders not found",response?.payload?.message)
-  //       }
-  //     } catch (error) {
-  //       dispatch(
-  //         showSnackbar({
-  //           message: "An error occurred while loading orders",
-  //           type: "error",
-  //           time: 2000,
-  //         })
-  //       );
-  //     }
-  //   };
-  //   fetchOrders();
-  // }, []);
+  useEffect(() => {
+    const fetchOrders = async () => {
+       try {
+        const response = await dispatch(getUserAllOrders(user?.userId));
+        // console.log(" All orders at home",response)
+        if (getUserAllOrders.fulfilled && getUserAllOrders.fulfilled.match(response)) {
+          dispatch(
+            showSnackbar({
+              message: response?.payload?.message || "Orders loaded successfully",
+              type: "success",
+              time: 2000,
+            })
+          );
+        } else {
+          console.log("orders not found",response?.payload?.message)
+        }
+      } catch (error) {
+        dispatch(
+          showSnackbar({
+            message: "An error occurred while loading orders",
+            type: "error",
+            time: 2000,
+          })
+        );
+      }
+    };
+    fetchOrders();
+  }, []);
 
 
   useEffect(() => {
@@ -222,7 +222,7 @@ const UserHome = ({ navigation }) => {
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}></Text>
             <TouchableOpacity>
-              <Icon name="notifications" size={24} color={Colors.whiteColor} />
+              {/* <Icon name="notifications" size={24} color={Colors.whiteColor} /> */}
             </TouchableOpacity>
           </View>
           <TouchableOpacity
@@ -275,7 +275,7 @@ const UserHome = ({ navigation }) => {
               <Text style={{ fontSize: 14, fontWeight: "700" }}>
                 Nearest Ongoing Vehicles:{" "}
               </Text>
-              <TouchableOpacity
+              {/* <TouchableOpacity
                 onPress={() => navigation.navigate("AllNearestJourney")}
               >
                 <Text
@@ -287,7 +287,7 @@ const UserHome = ({ navigation }) => {
                 >
                   See All
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
             {isLoading ? (
               <View style={{ paddingTop: 60, marginHorizontal: 10 }}>
@@ -299,7 +299,7 @@ const UserHome = ({ navigation }) => {
                   journeys.map((item) => (
                     <TouchableOpacity
                       activeOpacity={0.8}
-                      key={item.id}
+                      key={item?.journey?.journeyId}
                       onPress={() => handleCardClick(item)}
                     >
                       <JourneyCard data={item} />

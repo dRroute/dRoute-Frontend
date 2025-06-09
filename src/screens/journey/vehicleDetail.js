@@ -22,8 +22,12 @@ import { Colors, commonStyles, Fonts } from "../../constants/styles";
 import SwipeableTabs from "../../components/swipeableTabs";
 import { ParcelCard, ParcelLoadingCard } from "../../components/parcelCard";
 import { FlatList, TextInput } from "react-native-gesture-handler";
+import { getDimensionUnitAbbreviation, getWeightUnitAbbreviation } from "../../utils/commonMethods";
 
-const VehicleDetail = ({ navigation }) => {
+const VehicleDetail = ({ navigation, route }) => {
+  const { item } = route?.params;
+  const driver = item?.driver;
+  const journey = item?.journey
   const [isOfferModalVisible, setOfferModalVisible] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [offerPrice, setOfferPrice] = useState(null);
@@ -31,13 +35,20 @@ const VehicleDetail = ({ navigation }) => {
   const handleOfferSubmit = () => {};
 
   const VehicleDetailTab = () => {
+    const driverAvatarUrl = driver?.documents?.find(
+      (doc) => doc.documentName === `${driver?.driverId}_avatar`
+    )?.documentUrl;
+
     return (
       <>
         <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
           <View style={styles.userContainer}>
             <View style={styles.userInfo}>
-              {image ? (
-                <Image source={{ uri: image }} style={styles.userImage} />
+              {driverAvatarUrl ? (
+                <Image
+                  source={{ uri: driverAvatarUrl }}
+                  style={styles.userImage}
+                />
               ) : (
                 <View style={styles.userImagePlaceholder}>
                   <MaterialIcons
@@ -48,30 +59,35 @@ const VehicleDetail = ({ navigation }) => {
                 </View>
               )}
               <View style={styles.userDetails}>
-                <Text style={styles.userName}>Alok</Text>
+                <Text style={styles.userName}>{driver?.fullName}</Text>
                 <Text style={{ ...Fonts.grayColor12Medium }}>
-                  TATA Mini Truck
+                  {driver?.vehicleName}
                 </Text>
               </View>
             </View>
 
             <TouchableOpacity
-              onPress={() => navigation.navigate("AllReviewScreen")}
+              onPress={() =>
+                navigation.navigate("AllReviewScreen", {
+                  driverId: driver?.driverId,
+                })
+              }
               style={styles.chatIcon}
             >
-              <Text style={{ fontSize: 12, fontWeight: "500" }}>⭐4.5</Text>
+              <Text style={{ fontSize: 12, fontWeight: "500" }}>
+                ⭐{item?.averageDriverRating}
+              </Text>
               <Text style={{ fontSize: 12, fontWeight: "500" }}>See All</Text>
             </TouchableOpacity>
           </View>
-
           <View style={styles.locationsContainer}>
             <LocationItem
               title="Source Address"
-              address="Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041 Vadgaon Bk Pune 411041"
+              address={journey?.journeySource?.address}
             />
             <LocationItem
               title="Destination Address"
-              address="Vadgaon Bk Pune 411041 411041 Vadgaon Bk Pune 411041"
+              address={journey?.journeyDestination?.address}
             />
           </View>
 
@@ -80,10 +96,36 @@ const VehicleDetail = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Vehicle Capacity:</Text>
             <View style={styles.divider} />
             <View style={{ marginTop: 8 }}>
-              <DetailRow label="Height" value="20 m" />
-              <DetailRow label="Width" value="10 m" />
-              <DetailRow label="Length" value="19 m" />
-              <DetailRow label="Weight" value="20 Kg" />
+              <DetailRow
+                label="Height"
+                value={`${
+                  journey?.availableHeight
+                } ${getDimensionUnitAbbreviation(
+                  journey?.availableSpaceMeasurementType
+                )}`}
+              />
+              <DetailRow
+                label="Width"
+                value={`${
+                  journey?.availableWidth
+                } ${getDimensionUnitAbbreviation(
+                  journey?.availableSpaceMeasurementType
+                )}`}
+              />
+              <DetailRow
+                label="Length"
+                value={`${
+                  journey?.availableLength
+                } ${getDimensionUnitAbbreviation(
+                  journey?.availableSpaceMeasurementType
+                )}`}
+              />
+              <DetailRow
+                label="Weight"
+                value={`${journey?.availableWeight} ${getWeightUnitAbbreviation(
+                  journey?.availableWeightMeasurementType
+                )}`}
+              />
             </View>
           </View>
 
