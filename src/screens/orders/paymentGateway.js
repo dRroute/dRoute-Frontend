@@ -41,19 +41,30 @@ const PaymentGatewayScreen = ({ navigation, route }) => {
   const [showModal, setShowModal] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState(null); // 'success' or 'failure'
   const [isProcessing, setIsProcessing] = useState(false);
-  const user = useSelector(selectUserectUser);
+  const user = useSelector(selectUser);
   const dispatch = useDispatch();
   console.log("data at payment screen=>", data);
   // Payment data
   const paymentData = {
     amount: data?.offeredFare,
-    orderId: data?.courierId,
+    orderId: data?.orderId,
     customerEmail: user?.email,
-  };
+  }
+const paymentRequestDto = {
+  orderId: data?.orderId,
+  amount: data?.offeredFare,
+  paymentMethod: "card",
+  transactionId: Date.now(),
+  status: "COMPLETED"
+};
 
  const handlePayment = (status) => {
   setIsProcessing(true);
-  
+  const paymentDataToSend={
+    ...data,
+    paymentRequestDto
+   }
+   console.log("paymentDataToSend at payment screen=>", paymentDataToSend);
   try {
     if (status === "success") {
       // Call API here if payment is successful
@@ -83,6 +94,9 @@ const PaymentGatewayScreen = ({ navigation, route }) => {
       setPaymentStatus("failure");
       setShowModal(true);
     }, 2000);
+  }finally{
+     setIsProcessing(false);
+     setShowModal(false);
   }
 };
 

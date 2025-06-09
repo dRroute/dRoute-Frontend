@@ -181,7 +181,7 @@ export function ImageBottomSheet({
   isBottomSheetVisible,
   setBottomSheetVisible,
   setImageLoading,
-  user,
+  entity,
   dispatch,
 }) {
   return (
@@ -200,7 +200,7 @@ export function ImageBottomSheet({
               currentImageLabel,
               setImageLoading,
               setBottomSheetVisible,
-              user,
+              entity,
               dispatch
             )
           }
@@ -218,7 +218,7 @@ export function ImageBottomSheet({
               currentImageLabel,
               setImageLoading,
               setBottomSheetVisible,
-              user,
+              entity,
               dispatch
             )
           }

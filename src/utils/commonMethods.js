@@ -4,8 +4,9 @@ import { Alert } from "react-native";
 import Key from "../constants/key";
 import { useSelector } from "react-redux";
 import { selectUser } from "../redux/selector/authSelector";
-import { uploadSingleDocument } from "../redux/thunk/courierThunk";
+
 import { showSnackbar } from "../redux/slice/snackbarSlice";
+import { uploadSingleDocument } from "../redux/thunk/documentThunk";
 export const setupImagePicker = (file, label) => {
   // console.log("inside setup image");
 
@@ -32,13 +33,15 @@ export const setupImagePicker = (file, label) => {
   return formData;
 };
 
-export const handleImageUpload = async (file, label, user, dispatch) => {
+export const handleImageUpload = async (file, label, entity, dispatch) => {
   console.log("this is file = ", file);
+
+
   const data = {
     file,
-    driverId: user?.driverId,
-    // driverId: parseInt(user?.driverId, 10),
-    documentName: label,
+    id: entity?.id,
+    name: entity,
+    documentName:label
   };
 
   if (file && label) {
@@ -68,7 +71,7 @@ export const openGallery = async (
   label,       
   setImageLoading,         
   setBottomSheetVisible,   
-  user,                   
+  entity,                   
   dispatch  
 ) => {
   setImageLoading(label);
@@ -93,7 +96,7 @@ export const openGallery = async (
       const googleDriveURI = await handleImageUpload(
         file,
         label,
-        user,
+        entity,
         dispatch
       );
       console.log("google Drive URI ", googleDriveURI+"&t="+Date.now());//to make unique url , to replace cache data
@@ -116,7 +119,7 @@ export const openCamera = async (
   label,
   setImageLoading,
   setBottomSheetVisible,
-  user,
+  entity,
   dispatch
 ) => {
   console.log("This is label of image:", label);
@@ -140,7 +143,7 @@ export const openCamera = async (
       const googleDriveURI = await handleImageUpload(
         file,
         label,
-        user,
+        entity,
         dispatch
       );
       console.log("Google Drive URI =", googleDriveURI);

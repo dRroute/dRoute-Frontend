@@ -198,7 +198,7 @@ const AddAddress = ({ navigation, route }) => {
           isBottomSheetVisible={isBottomSheetVisible}
           setBottomSheetVisible={setBottomSheetVisible}
           setImageLoading={setImageLoading}
-          user={user}
+          entity={user}
           dispatch={dispatch}
         />
       </ScrollView>

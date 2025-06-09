@@ -128,6 +128,7 @@ const RequestDetailScreen = ({ navigation, route }) => {
 
 
    const dataToNavigate ={
+    orderId:order?.id,
     courierId:courier?.courierId,
     journeyId:journey?.journeyId,
     userId:user?.userId,

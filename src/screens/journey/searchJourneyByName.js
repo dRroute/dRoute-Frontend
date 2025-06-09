@@ -23,9 +23,8 @@ import { useSelector } from "react-redux";
 import { selectAuthloader } from "../../redux/selector/authSelector";
 
 const SearchJourneyByName = ({ navigation, route }) => {
-  const { journeys } = route?.params;
+  const { journeys,refresher,setRefresher } = route?.params;
   const isLoading =useSelector(selectAuthloader);
-
   const [searchText, setSearchText] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const filteredJourneys = searchText
@@ -44,7 +43,11 @@ const SearchJourneyByName = ({ navigation, route }) => {
   const handleCardClick = (item) => {
     navigation.navigate("VehicleDetail",{item});
   };
-  const handleRefresh = async () => {};
+  const handleRefresh = async () => {
+    setRefresher(!refresher)
+  };
+
+
   return (
     <SafeAreaView style={styles.container}>
       <MyStatusBar />
