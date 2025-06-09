@@ -19,10 +19,13 @@ import {
   JourneyCardSkeleton,
   JourneyCard,
 } from "../../components/userSideJourneyCard";
+import { useSelector } from "react-redux";
+import { selectAuthloader } from "../../redux/selector/authSelector";
 
 const SearchJourneyByName = ({ navigation, route }) => {
   const { journeys } = route?.params;
-  const [isLoading, setIsLoading] = useState(false);
+  const isLoading =useSelector(selectAuthloader);
+
   const [searchText, setSearchText] = useState("");
   const [refreshing, setRefreshing] = useState(false);
   const filteredJourneys = searchText
