@@ -16,7 +16,7 @@ export const getUserOrdersAPI = (userId) =>
 // API CALLS
 export const updateOrderDetailsAPI = (data) =>
   apiPutRequest({
-    apiUrl: `${ORDER_API_URL}/${data?.userId}`,
+    apiUrl: `${ORDER_API_URL}/${data?.orderId}`,
     content_type: "application/json",
     data: data,
     accessToken: null,

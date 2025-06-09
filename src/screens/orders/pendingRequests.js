@@ -28,7 +28,7 @@ const PendingRequests = ({ navigation }) => {
   const couriers = useSelector(selectOrders);
  const [refreshing, setRefreshing] = useState(false);
   
- console.log("this is couriers ,in pending Screen upperr ",couriers);
+//  console.log("this is couriers ,in pending Screen upperr ",couriers);
   const JOURNEYS = couriers.filter(item => item.order?.payment === null || item.order?.payment !== 'COMPLETED');
  console.log("this is couriers ,in pending Screen ",JOURNEYS);
 

@@ -33,21 +33,26 @@ export const setupImagePicker = (file, label) => {
   return formData;
 };
 
-export const handleImageUpload = async (file, label, entity, dispatch) => {
+export const handleImageUpload = async (
+  file,
+  name,
+  id,
+  documentName,
+  dispatch
+) => {
   console.log("this is file = ", file);
-
 
   const data = {
     file,
-    id: entity?.id,
-    name: entity,
-    documentName:label
+    id,
+    name,
+    documentName,
   };
 
-  if (file && label) {
+  if (file && name && id && documentName) {
     const response = await dispatch(uploadSingleDocument(data));
     if (uploadSingleDocument.fulfilled.match(response)) {
-      return response?.payload?.data;
+      return response?.payload?.data?.documentUrl;
     } else {
       dispatch(
         showSnackbar({
@@ -55,8 +60,8 @@ export const handleImageUpload = async (file, label, entity, dispatch) => {
             response?.payload?.message ||
             response?.payload?.title ||
             "Document Not Uploaded. Please try again",
-            type:"error",
-            time: 5000
+          type: "error",
+          time: 5000,
         })
       );
       return null;
@@ -65,14 +70,15 @@ export const handleImageUpload = async (file, label, entity, dispatch) => {
   }
 };
 
-
 export const openGallery = async (
-  currentImageSetter,      
-  label,       
-  setImageLoading,         
-  setBottomSheetVisible,   
-  entity,                   
-  dispatch  
+  currentImageSetter,
+  label,
+  setImageLoading,
+  setBottomSheetVisible,
+  name,
+  id,
+  documentName,
+  dispatch
 ) => {
   setImageLoading(label);
   setBottomSheetVisible(false);
@@ -95,12 +101,13 @@ export const openGallery = async (
       console.log("File  = ", file);
       const googleDriveURI = await handleImageUpload(
         file,
-        label,
-        entity,
+        name,
+        id,
+        documentName,
         dispatch
       );
-      console.log("google Drive URI ", googleDriveURI+"&t="+Date.now());//to make unique url , to replace cache data
-      currentImageSetter(googleDriveURI+"&t="+Date.now());
+      console.log("google Drive URI ", googleDriveURI + "&t=" + Date.now()); //to make unique url , to replace cache data
+      currentImageSetter(googleDriveURI + "&t=" + Date.now());
       return imageUri;
     }
   } catch (error) {
@@ -119,10 +126,13 @@ export const openCamera = async (
   label,
   setImageLoading,
   setBottomSheetVisible,
-  entity,
+  name,
+  id,
+  documentName,
   dispatch
 ) => {
-  console.log("This is label of image:", label);
+
+  console.log("This is label of image:");
   setImageLoading(label);
   setBottomSheetVisible(false);
 
@@ -142,13 +152,14 @@ export const openCamera = async (
 
       const googleDriveURI = await handleImageUpload(
         file,
-        label,
-        entity,
+        name,
+        id,
+        documentName,
         dispatch
       );
       console.log("Google Drive URI =", googleDriveURI);
 
-          currentImageSetter(googleDriveURI+"&t="+Date.now());
+      currentImageSetter(googleDriveURI + "&t=" + Date.now());
       return imageUri;
     }
   } catch (error) {
@@ -161,7 +172,6 @@ export const openCamera = async (
 
   return null;
 };
-
 
 export const removeImage = (setter, setBottomSheetVisible) => {
   setter(null);
@@ -308,7 +318,6 @@ export const trimText = (text, maxLength) => {
   return text.length > maxLength ? text.slice(0, maxLength) + "..." : text;
 };
 
-
 // Map enum names to abbreviations
 const weightUnitAbbreviations = {
   GRAMS: "g",
@@ -319,11 +328,9 @@ const weightUnitAbbreviations = {
   TONNES: "t",
 };
 
-
 export const getWeightUnitAbbreviation = (enumName) => {
   return weightUnitAbbreviations[enumName] || enumName;
 };
-
 
 // Map enum names to abbreviations for DimensionUnit
 const dimensionUnitAbbreviations = {

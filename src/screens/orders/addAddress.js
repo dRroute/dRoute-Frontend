@@ -61,34 +61,38 @@ const AddAddress = ({ navigation, route }) => {
   const [senderName, setSenderName] = useState(null);
   const [recieverName, setRecieverName] = useState(null);
   const [senderNumber, setSenderNumber] = useState(null);
-  const [parcelImageURI, setParcelImageURI] = useState("anjsjwd");
+  const [parcelImageURI, setParcelImageURI] = useState("https://plus.unsplash.com/premium_photo-1682129768936-c5b7c3033cdc?q=80&w=1932&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
   // console.log("data at add address page==>", dataToNavigate);
 
- const validateForm = (data) => {
-  const { senderName, recieverName, senderContactNo, recieverContactNo } = data;
+  const validateForm = (data) => {
+    const { senderName, recieverName, senderContactNo, recieverContactNo } =
+      data;
 
-  if (!senderName || !recieverName || !senderContactNo || !recieverContactNo) {
-    return "Please fill in all required fields: Sender & Receiver Name and Contact Numbers.";
-  }
+    if (
+      !senderName ||
+      !recieverName ||
+      !senderContactNo ||
+      !recieverContactNo
+    ) {
+      return "Please fill in all required fields: Sender & Receiver Name and Contact Numbers.";
+    }
 
+    if (!PHONE_REGEX.test(senderContactNo)) {
+      return "Please enter a valid sender contact number.";
+    }
 
-  if (!PHONE_REGEX.test(senderContactNo)) {
-    return "Please enter a valid sender contact number.";
-  }
-
-  if (!PHONE_REGEX.test(recieverContactNo)) {
-    return "Please enter a valid receiver contact number.";
-  }
+    if (!PHONE_REGEX.test(recieverContactNo)) {
+      return "Please enter a valid receiver contact number.";
+    }
     if (!NAME_REGEX.test(recieverName)) {
-    return "Please enter a valid receiver Name.";
-  }
+      return "Please enter a valid receiver Name.";
+    }
     if (!NAME_REGEX.test(senderName)) {
-    return "Please enter a valid Sender Name.";
-  }
+      return "Please enter a valid Sender Name.";
+    }
 
-  return null; 
-};
-
+    return null;
+  };
 
   const handlePayNow = async () => {
     const data = {
@@ -116,7 +120,7 @@ const AddAddress = ({ navigation, route }) => {
 
     setIsLoading(true);
     try {
-      navigation.navigate("PaymentGatewayScreen",{data})
+      navigation.navigate("PaymentGatewayScreen", { data });
     } catch (err) {
       dispatch(
         showSnackbar({
@@ -198,7 +202,9 @@ const AddAddress = ({ navigation, route }) => {
           isBottomSheetVisible={isBottomSheetVisible}
           setBottomSheetVisible={setBottomSheetVisible}
           setImageLoading={setImageLoading}
-          entity={user}
+          name={"order"}
+          id={dataToNavigate.orderId}
+          documentName={"orderImage"}
           dispatch={dispatch}
         />
       </ScrollView>
@@ -206,6 +212,7 @@ const AddAddress = ({ navigation, route }) => {
       {circularLoader(isLoading)}
     </View>
   );
+
 
   function imageSection() {
     return (
