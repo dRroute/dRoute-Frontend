@@ -29,7 +29,7 @@ const PendingRequests = ({ navigation }) => {
  const [refreshing, setRefreshing] = useState(false);
   
  console.log("this is couriers ,in pending Screen upperr ",couriers);
-  const JOURNEYS = couriers.filter(item => item.order?.payment !== null || item.order?.payment !== 'COMPLETED');
+  const JOURNEYS = couriers.filter(item => item.order?.payment === null || item.order?.payment !== 'COMPLETED');
  console.log("this is couriers ,in pending Screen ",JOURNEYS);
 
   const handleCardClick = (item) => {

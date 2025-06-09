@@ -17,6 +17,7 @@ import { Colors } from "../../constants/styles";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../redux/selector/authSelector";
 import { showSnackbar } from "../../redux/slice/snackbarSlice";
+import { updateOrderDetails } from "../../redux/thunk/orderThunk";
 
 // Define colors at the top for easy customization
 const COLORS = {
@@ -50,55 +51,61 @@ const PaymentGatewayScreen = ({ navigation, route }) => {
     orderId: data?.orderId,
     customerEmail: user?.email,
   }
-const paymentRequestDto = {
-  orderId: data?.orderId,
-  amount: data?.offeredFare,
-  paymentMethod: "card",
-  transactionId: Date.now(),
-  status: "COMPLETED"
-};
+  const paymentRequestDto = {
+    orderId: data?.orderId,
+    amount: data?.offeredFare,
+    paymentMethod: "card",
+    transactionId: Date.now(),
+    status: "COMPLETED"
+  };
 
- const handlePayment = (status) => {
-  setIsProcessing(true);
-  const paymentDataToSend={
-    ...data,
-    paymentRequestDto
-   }
-   console.log("paymentDataToSend at payment screen=>", paymentDataToSend);
-  try {
-    if (status === "success") {
-      // Call API here if payment is successful
-      setTimeout(() => {
-        setIsProcessing(false);
-        setPaymentStatus("success");
-        setShowModal(true);
-      }, 2000);
-    } else {
-      // If status is not "success", treat it as failure
+  const handlePayment = (status) => {
+    setIsProcessing(true);
+    const paymentDataToSend = {
+      ...data,
+      paymentRequestDto
+    }
+    console.log("paymentDataToSend at payment screen=>", paymentDataToSend);
+    try {
+
+      const response = dispatch(updateOrderDetails(paymentDataToSend));
+
+      if (updateOrderDetails.fulfilled.match(response)) {
+        // Call API here if payment is successful
+        setTimeout(() => {
+          setIsProcessing(false);
+          setPaymentStatus("success");
+          setShowModal(true);
+        }, 2000);
+      }
+
+
+      else {
+        // If status is not "success", treat it as failure
+        setTimeout(() => {
+          setIsProcessing(false);
+          setPaymentStatus("failure");
+          setShowModal(true);
+        }, 2000);
+      }
+    } catch (error) {
+      dispatch(
+        showSnackbar({
+          message: error?.message || "Something went wrong",
+          type: "error",
+          time: 3000,
+        })
+      );
       setTimeout(() => {
         setIsProcessing(false);
         setPaymentStatus("failure");
         setShowModal(true);
       }, 2000);
-    }
-  } catch (error) {
-    dispatch(
-      showSnackbar({
-        message: error?.message || "Something went wrong",
-        type: "error",
-        time: 3000,
-      })
-    );
-    setTimeout(() => {
+    } finally {
       setIsProcessing(false);
-      setPaymentStatus("failure");
-      setShowModal(true);
-    }, 2000);
-  }finally{
-     setIsProcessing(false);
-     setShowModal(false);
-  }
-};
+      setShowModal(false);
+    }
+  };
 
   const closeModal = () => {
     setShowModal(false);

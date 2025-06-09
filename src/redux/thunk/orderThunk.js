@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { getUserOrdersAPI } from "../../utils/api/orderApi";
+import { getUserOrdersAPI, updateOrderDetailsAPI } from "../../utils/api/orderApi";
 import { handleAxiosError } from "./authThunk";
 
 
@@ -17,5 +17,23 @@ export const getUserAllOrders = createAsyncThunk(
     }
   }
 );
+
+
+// Update order details 
+export const updateOrderDetails = createAsyncThunk(
+  "order/updateOrderDetails",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await updateOrderDetailsAPI(data);
+      return response?.data;
+
+    } catch (error) {
+      console.log("Error in updateOrderDetails Thunk:", error);
+      return rejectWithValue(handleAxiosError(error));
+    }
+  }
+);
+
+
 
 

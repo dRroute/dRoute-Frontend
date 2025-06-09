@@ -7,7 +7,7 @@ import {
   postCourier,
   sendOrderRequest,
 } from "../thunk/courierThunk";
-import { getUserAllOrders } from "../thunk/orderThunk";
+import { getUserAllOrders, updateOrderDetails } from "../thunk/orderThunk";
 import { getAllJourney } from "../thunk/journeyThunk";
 
 const initialState = {
@@ -136,6 +136,37 @@ const authSlice = createSlice({
       })
 
       .addCase(sendOrderRequest.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action?.payload?.message;
+      })
+
+      //Update order details
+      .addCase(updateOrderDetails.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateOrderDetails.fulfilled, (state, action) => {
+        state.loading = false;
+        const newOrder = action?.payload?.data;
+        console.log("this is new order in slice", newOrder);
+
+        const existingIndex = state.orders.findIndex(
+          (order) =>
+            order?.courier?.courierId === newOrder?.courier?.courierId &&
+            order?.journeyDetails?.journey?.journeyId ===
+              newOrder?.journeyDetails?.journey?.journeyId
+        );
+
+        if (existingIndex !== -1) {
+          // Replace the existing order
+          state.orders[existingIndex] = newOrder;
+        } else {
+          // Add the new unique order
+          state.orders.push(newOrder);
+        }
+      })
+
+      .addCase(updateOrderDetails.rejected, (state, action) => {
         state.loading = false;
         state.error = action?.payload?.message;
       })
