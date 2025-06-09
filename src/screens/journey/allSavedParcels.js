@@ -21,6 +21,7 @@ const AllSavedParcels = ({ navigation }) => {
   const couriers = Array.isArray(rawCouriers)
     ? rawCouriers.filter((item) => item?.status === 'SAVED')
     : [];
+  console.log('saved couriers = ', couriers);
 
   useEffect(() => {
     const fetchSavedCourier = async () => {

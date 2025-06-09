@@ -52,12 +52,10 @@ const RequestDetailScreen = ({ navigation, route }) => {
     (doc) => doc.documentName === `${driver?.driverId}_avatar`
   )?.documentUrl;
   const isLoading = useSelector(selectAuthloader);
-  // const [isAccepted, setIsAccepted] = useState(
-  //   requestDetail?.order?.status === "ACCEPTED"
-  // );
- const [isAccepted, setIsAccepted] = useState(
-   true
+  const [isAccepted, setIsAccepted] = useState(
+    requestDetail?.order?.status === "ACCEPTED"
   );
+
 
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
