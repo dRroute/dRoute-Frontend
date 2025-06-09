@@ -61,10 +61,13 @@ const PACKAGES = [
 const AllOrders = ({ navigation }) => {
 
   const [isLoading,setIsLoading]=useState(false);
-  const orders = useSelector(selectOrders);
-  const acceptedOrders = orders.filter(
-  (data) => data?.order?.orderStatus === "ACCEPTED"
+  const allOrders = useSelector(selectOrders);
+
+  console.log('all orders = ' , allOrders);
+  const orders = allOrders.filter(
+  (data) => data?.order?.orderStatus === "ACCEPTED" && data?.order?.payment?.status === 'COMPLETED'
 );
+  console.log('accepted orders = ' , orders);
 
   const renderPackageCard = ({ item }) =>
 (

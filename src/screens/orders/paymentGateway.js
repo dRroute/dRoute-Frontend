@@ -59,7 +59,7 @@ const PaymentGatewayScreen = ({ navigation, route }) => {
     status: "COMPLETED"
   };
 
-  const handlePayment = (status) => {
+  const handlePayment = async (status) => {
     setIsProcessing(true);
     const paymentDataToSend = {
       ...data,
@@ -68,21 +68,24 @@ const PaymentGatewayScreen = ({ navigation, route }) => {
     console.log("paymentDataToSend at payment screen=>", paymentDataToSend);
     try {
 
-      const response = dispatch(updateOrderDetails(paymentDataToSend));
+      const response = await dispatch(updateOrderDetails(paymentDataToSend));
 
       if (updateOrderDetails.fulfilled.match(response)) {
         // Call API here if payment is successful
-        setTimeout(() => {
+        await setTimeout(() => {
           setIsProcessing(false);
           setPaymentStatus("success");
           setShowModal(true);
         }, 2000);
+
+        
+
       }
 
 
       else {
         // If status is not "success", treat it as failure
-        setTimeout(() => {
+        await setTimeout(() => {
           setIsProcessing(false);
           setPaymentStatus("failure");
           setShowModal(true);
@@ -110,6 +113,7 @@ const PaymentGatewayScreen = ({ navigation, route }) => {
   const closeModal = () => {
     setShowModal(false);
     setPaymentStatus(null);
+    navigation.pop(4);
   };
 
   const PaymentModal = () => (
